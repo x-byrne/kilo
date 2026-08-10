@@ -1,0 +1,75 @@
+name: Fetch ABS Data
+on:
+  schedule:
+    - cron: '0 4 * * 1'
+  workflow_dispatch:
+
+jobs:
+  fetch-abs-data:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Fetch CPI
+        run: |
+          mkdir -p data/cpi
+          curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://api.data.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=CSV" \
+            -o data/cpi/cpi.csv
+      - name: Fetch AWE
+        run: |
+          mkdir -p data/awe
+          curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://api.data.abs.gov.au/data/ABS,AWE?dimension=Measure=1&format=CSV" \
+            -o data/awe/awe.csv
+      - name: Fetch WPI
+        run: |
+          mkdir -p data/wpi
+          curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://api.data.abs.gov.au/data/ABS,WPI?dimension=Measure=1&format=CSV" \
+            -o data/wpi/wpi.csv
+      - name: Fetch LCI
+        run: |
+          mkdir -p data/lci
+          curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://api.data.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=CSV" \
+            -o data/lci/lci.csv
+      - name: Fetch Population
+        run: |
+          mkdir -p data/population
+          curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://api.data.abs.gov.au/data/ABS,ERP_COMP_Q?format=CSV" \
+            -o data/population/population.csv
+      - name: Fetch GDP
+        run: |
+          mkdir -p data/gdp
+          curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://api.data.abs.gov.au/data/ABS,NATIONAL_ACCOUNTS?format=CSV" \
+            -o data/gdp/gdp.csv
+      - name: Fetch Households
+        run: |
+          mkdir -p data/households
+          curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://api.data.abs.gov.au/data/ABS,ERP_HH?format=CSV" \
+            -o data/households/households.csv
+      - name: Generate fetch metadata
+        run: |
+          node -e "
+            const fs = require('fs');
+            const meta = {};
+            for (const dir of ['cpi','cpigroups','cpihousing','awe','lci','lcigroups','wpi','population','gdp','households']) {
+              try {
+                const content = fs.readFileSync('data/' + dir + '/' + dir + '.csv', 'utf8');
+                const lines = content.trim().split('\n');
+                meta[dir] = { rows: lines.length - 1, lastUpdated: new Date().toISOString() };
+              } catch (e) { meta[dir] = { error: e.message }; }
+            }
+            fs.writeFileSync('data/fetch-metadata.json', JSON.stringify(meta, null, 2));
+          "
+      - name: Commit and push
+        run: |
+          git config user.name "absvis-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/
+          git diff --cached --quiet || git commit -m "chore: update ABS data snapshots"
+          git push
