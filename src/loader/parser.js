@@ -50,12 +50,11 @@ export function periodLabel(num) {
   if (num === null || num === undefined) return '';
   const year = Math.floor(num);
   const frac = num - year;
-  if (Math.abs(frac) < 0.01) return String(year);
+  if (frac < 0.01) return String(year);
   if (Math.abs(frac - 0.25) < 0.01) return `${year}-Q1`;
   if (Math.abs(frac - 0.5) < 0.01) return `${year}-Q2`;
   if (Math.abs(frac - 0.75) < 0.01) return `${year}-Q3`;
-  if (Math.abs(frac - 0.5) < 0.01 && frac >= 0.45) return `${year}-S1`;
-  if (Math.abs(frac - 0.95) < 0.01) return `${year}-S2`;
+  if (Math.abs(frac - 1.0) < 0.01) return `${year}-Q4`;
   const q = Math.round(frac * 4);
   return `${year}-Q${Math.min(q, 4)}`;
 }
