@@ -1,0 +1,102 @@
+{
+  "cpi": {
+    "name": "Consumer Price Index",
+    "dataflow": "ABS,CPI",
+    "key": "1",
+    "frequency": "Q",
+    "units": "Index",
+    "description": "Measures changes in the price level of a basket of goods and services.",
+    "category": "Prices",
+    "absCatalogue": "https://api.data.abs.gov.au/dataflow/ABS/CPI"
+  },
+  "cpigroups": {
+    "name": "CPI Groups",
+    "dataflow": "ABS,CPI",
+    "key": "1.GP",
+    "frequency": "Q",
+    "units": "Index",
+    "description": "CPI by expenditure group.",
+    "category": "Prices",
+    "absCatalogue": "https://api.data.abs.gov.au/dataflow/ABS/CPI"
+  },
+  "cpihousing": {
+    "name": "CPI Housing",
+    "dataflow": "ABS,CPI",
+    "key": "04",
+    "frequency": "Q",
+    "units": "Index",
+    "description": "Housing component of the CPI.",
+    "category": "Prices",
+    "absCatalogue": "https://api.data.abs.gov.au/dataflow/ABS/CPI"
+  },
+  "awe": {
+    "name": "Average Weekly Earnings",
+    "dataflow": "ABS,AWE",
+    "key": "1",
+    "frequency": "S",
+    "units": "AUD",
+    "description": "Average weekly earnings for total Australia.",
+    "category": "Income",
+    "absCatalogue": "https://api.data.abs.gov.au/dataflow/ABS/AWE"
+  },
+  "lci": {
+    "name": "Labour Cost Index",
+    "dataflow": "ABS,LCI",
+    "key": "1",
+    "frequency": "Q",
+    "units": "Index",
+    "description": "Index of labour costs.",
+    "category": "Income",
+    "absCatalogue": "https://api.data.abs.gov.au/dataflow/ABS/LCI"
+  },
+  "lcigroups": {
+    "name": "LCI Groups",
+    "dataflow": "ABS,LCI",
+    "key": "1.GP",
+    "frequency": "Q",
+    "units": "Index",
+    "description": "LCI by industry or sector.",
+    "category": "Income",
+    "absCatalogue": "https://api.data.abs.gov.au/dataflow/ABS/LCI"
+  },
+  "wpi": {
+    "name": "Wage Price Index",
+    "dataflow": "ABS,WPI",
+    "key": "1",
+    "frequency": "Q",
+    "units": "Index",
+    "description": "Changes in wage rates.",
+    "category": "Income",
+    "absCatalogue": "https://api.data.abs.gov.au/dataflow/ABS/WPI"
+  },
+  "population": {
+    "name": "Estimated Resident Population",
+    "dataflow": "ABS,ERP_COMP_Q",
+    "key": "ERP",
+    "frequency": "Q",
+    "units": "Persons",
+    "description": "Estimated resident population by state and Australia.",
+    "category": "Population",
+    "absCatalogue": "https://api.data.abs.gov.au/dataflow/ABS/ERP_COMP_Q"
+  },
+  "gdp": {
+    "name": "Gross Domestic Product",
+    "dataflow": "ABS,NATIONAL_ACCOUNTS",
+    "key": "1.GDP.M.P3.A.2.Q",
+    "frequency": "Q",
+    "units": "AUD millions",
+    "description": "GDP chain volume measures, seasonally adjusted.",
+    "category": "National Accounts",
+    "absCatalogue": "https://api.data.abs.gov.au/dataflow/ABS/NATIONAL_ACCOUNTS"
+  },
+  "households": {
+    "name": "Estimated Households",
+    "dataflow": "ABS,ERP_HH",
+    "key": "ERP",
+    "frequency": "Q",
+    "units": "Households",
+    "description": "Estimated number of households.",
+    "category": "Population",
+    "absCatalogue": "https://api.data.abs.gov.au/dataflow/ABS/ERP_HH"
+  }
+}
