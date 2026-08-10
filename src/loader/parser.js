@@ -72,11 +72,11 @@ export function interpolateSeries(rows, targetNums, valueKey = 'value') {
     let i = 0;
     while (i < points.length - 1 && points[i + 1].num < tn) i++;
     if (points[i].num === tn) {
-      result.push({ period: periodLabel(tn), value: points[i].val });
+      result.push({ period: tn, value: points[i].val });
     } else if (i < points.length - 1) {
       const t = (tn - points[i].num) / (points[i + 1].num - points[i].num);
       const v = points[i].val + t * (points[i + 1].val - points[i].val);
-      result.push({ period: periodLabel(tn), value: Math.round(v * 100) / 100 });
+      result.push({ period: tn, value: Math.round(v * 100) / 100 });
     }
   }
   return result;

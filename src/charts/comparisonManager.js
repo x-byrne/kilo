@@ -1,5 +1,5 @@
 import { ChartManager } from './chartManager.js';
-import { compose, rebase, growth as growthTransform, ratio as ratioTransform, deflate, perCapita, perHousehold } from '../transforms/index.js';
+import { compose, rebase, growth as growthTransform, ratio as ratioTransform, deflate, perCapita, perHousehold, normalizeSeries } from '../transforms/index.js';
 
 const WARM = ['#e76f51', '#f4a261', '#e9c46a', '#d62828', '#f77f00'];
 const COOL = ['#2a9d8f', '#264653', '#8ab17d', '#457b9d', '#1d3557'];
@@ -28,18 +28,19 @@ export class ComparisonManager {
     if (!ids.length) return null;
     const promises = ids.map(id => this.loader.load(id));
     const allRows = await Promise.all(promises);
-    const targetNums = this._commonTimeline(allRows);
+    const benchmarkId = this.benchmarkId || ids[0];
+    const benchmarkIdx = ids.indexOf(benchmarkId);
+    const benchmark = this._normalize(allRows[benchmarkIdx], benchmarkId, this.catalog.get(benchmarkId).name);
     const datasets = [];
-    const benchmark = this.benchmarkId ? allRows[ids.indexOf(this.benchmarkId)] : allRows[0];
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
       const meta = this.series.get(id).meta;
-      let rows = allRows[i];
+      let rows = this._normalize(allRows[i], id, meta.name);
       const pipeline = this.series.get(id).transformPipeline;
       for (const fn of pipeline) {
-        if (fn === 'deflate') rows = deflate(rows, benchmark, targetNums);
-        else if (fn === 'perCapita') rows = perCapita(rows, benchmark, targetNums);
-        else if (fn === 'perHousehold') rows = perHousehold(rows, benchmark, targetNums);
+        if (fn === 'deflate') rows = deflate(rows, benchmark);
+        else if (fn === 'perCapita') rows = perCapita(rows, benchmark);
+        else if (fn === 'perHousehold') rows = perHousehold(rows, benchmark);
         else if (typeof fn === 'function') rows = fn(rows);
       }
       if (mode === 'index') rows = rebase(rows, 0);
@@ -64,6 +65,9 @@ export class ComparisonManager {
         plugins: { legend: { display: datasets.length > 1 } }
       }
     });
+  }
+  _normalize(rows, key, label) {
+    return normalizeSeries(rows, 'OBS_VALUE', key, label);
   }
   _commonTimeline(rowsArrays) {
     const nums = new Set();
