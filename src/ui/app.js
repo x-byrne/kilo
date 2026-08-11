@@ -135,10 +135,11 @@ export class App {
   async _renderChart() {
     if (!this.picker.selected.size) return;
     this.comparison.clear();
+    const pipeline = this.controls.state.deflator !== 'none' ? ['deflate'] : [];
     for (const id of this.picker.selected) {
-      this.comparison.addSeries(id, []);
+      this.comparison.addSeries(id, pipeline);
     }
-    await this.comparison.render('main-chart', this.controls.state.mode);
+    await this.comparison.render('main-chart', this.controls.state.mode, this.rangeSlider.from, this.rangeSlider.to);
     this.urlState.write({ series: Array.from(this.picker.selected), mode: this.controls.state.mode, deflator: this.controls.state.deflator, from: this.rangeSlider.from, to: this.rangeSlider.to });
   }
   _loadState() {

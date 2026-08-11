@@ -1,5 +1,6 @@
 import { ChartManager } from './chartManager.js';
 import { compose, rebase, growth as growthTransform, ratio as ratioTransform, deflate, perCapita, perHousehold } from '../transforms/index.js';
+import { periodToNum } from '../loader/parser.js';
 
 const WARM = ['#e76f51', '#f4a261', '#e9c46a', '#d62828', '#f77f00'];
 const COOL = ['#2a9d8f', '#264653', '#8ab17d', '#457b9d', '#1d3557'];
@@ -23,7 +24,7 @@ export class ComparisonManager {
   }
   clear() { this.series.clear(); this.benchmarkId = null; }
   setBenchmark(id) { this.benchmarkId = id; }
-  async render(canvasId, mode = 'index') {
+  async render(canvasId, mode = 'index', from, to) {
     const ids = Array.from(this.series.keys());
     if (!ids.length) return null;
     const promises = ids.map(id => this.loader.load(id));
@@ -45,6 +46,12 @@ export class ComparisonManager {
       if (mode === 'index') rows = rebase(rows, 0);
       else if (mode === 'growth') rows = growthTransform(rows, 4);
       else if (mode === 'ratio' && this.benchmarkId && id !== this.benchmarkId) rows = ratioTransform(rows, benchmark);
+      if (from !== undefined && to !== undefined) {
+        rows = rows.filter(r => {
+          const n = typeof r.period === 'number' ? r.period : periodToNum(r.period);
+          return n !== null && n >= from && n <= to;
+        });
+      }
       const color = this._assignColor(i, id);
       datasets.push({
         label: meta.name,
