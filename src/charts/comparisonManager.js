@@ -1,5 +1,6 @@
 import { ChartManager } from './chartManager.js';
 import { compose, rebase, growth as growthTransform, ratio as ratioTransform, deflate, perCapita, perHousehold } from '../transforms/index.js';
+import { interpolateSeries } from '../loader/parser.js';
 
 const WARM = ['#e76f51', '#f4a261', '#e9c46a', '#d62828', '#f77f00'];
 const COOL = ['#2a9d8f', '#264653', '#8ab17d', '#457b9d', '#1d3557'];
@@ -29,12 +30,13 @@ export class ComparisonManager {
     const promises = ids.map(id => this.loader.load(id));
     const allRows = await Promise.all(promises);
     const targetNums = this._commonTimeline(allRows);
+    const benchmarkSeries = this.benchmarkId ? allRows[ids.indexOf(this.benchmarkId)] : allRows[0];
+    const benchmark = interpolateSeries(benchmarkSeries, targetNums);
     const datasets = [];
-    const benchmark = this.benchmarkId ? allRows[ids.indexOf(this.benchmarkId)] : allRows[0];
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
       const meta = this.series.get(id).meta;
-      let rows = allRows[i];
+      let rows = interpolateSeries(allRows[i], targetNums);
       const pipeline = this.series.get(id).transformPipeline;
       for (const fn of pipeline) {
         if (fn === 'deflate') rows = deflate(rows, benchmark, targetNums);
@@ -79,6 +81,6 @@ export class ComparisonManager {
     if (id === this.benchmarkId) return '#1a1a1a';
     const useWarm = i % 2 === 0;
     const palette = useWarm ? WARM : COOL;
-    return palette[i % palette.length];
+    return palette[Math.floor(i / 2) % palette.length];
   }
 }
