@@ -18,7 +18,7 @@ jobs:
 
       - name: Create data directories
         run: |
-          mkdir -p data/cpi data/awe data/wpi data/lci data/population data/gdp data/households data/building_activity data/lending_housing data/labour_account data/household_spending data/labour_force
+          mkdir -p data/cpi data/cpigroups data/cpihousing data/awe data/wpi data/lci data/population data/gdp data/households data/building_activity data/lending_housing data/labour_account data/household_spending data/labour_force
 
       - name: Fetch CPI CSV
         run: |
@@ -310,5 +310,11 @@ jobs:
 
           Updated files:
           $(git diff --staged --name-only)"
-            git push
+             git push
           fi
+
+      - name: Purge CDN cache
+        run: |
+          for ds in cpi cpigroups cpihousing awe wpi lci population gdp households building_activity lending_housing labour_account household_spending labour_force; do
+            curl -s -o /dev/null -w "%{http_code}" "https://purge.jsdelivr.net/gh/x-byrne/kilo@main/data/${ds}/${ds}.csv" || true
+          done
