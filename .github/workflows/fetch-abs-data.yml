@@ -7,269 +7,308 @@ on:
 jobs:
   fetch-abs-data:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      ABS_API: "https://data.api.abs.gov.au/data"
+      USER_AGENT: "ABSVisFramework/1.0 (github-actions; open-source research)"
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Fetch CPI
+      - name: Create data directories
         run: |
-          mkdir -p data/cpi
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=CSV" \
-              -o data/cpi/cpi.csv && break
-            echo "Retry $i/3 for CPI CSV" >&2
-            sleep 5
-          done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=JSON" \
-              -o data/cpi/cpi.json && break
-            echo "Retry $i/3 for CPI JSON" >&2
-            sleep 5
-          done
-          test -s data/cpi/cpi.csv
-          echo '{"dataflow":"ABS,CPI","key":"1","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/cpi/cpi.meta.json
+          mkdir -p data/cpi data/awe data/wpi data/lci data/population data/gdp data/households data/building_activity data/lending_housing data/labour_account data/household_spending data/labour_force
 
-      - name: Fetch AWE
+      - name: Fetch CPI CSV
         run: |
-          mkdir -p data/awe
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,AWE?dimension=Measure=1&format=CSV" \
-              -o data/awe/awe.csv && break
-            echo "Retry $i/3 for AWE CSV" >&2
-            sleep 5
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=CSV" \
+            -o data/cpi/cpi.csv
+          echo "CPI CSV rows: $(wc -l < data/cpi/cpi.csv)"
+
+      - name: Fetch CPI JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=JSON" \
+            -o data/cpi/cpi.json
+          echo "CPI JSON: $(wc -c < data/cpi/cpi.json) bytes"
+
+      - name: Fetch AWE CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,AWE?dimension=Measure=1&format=CSV" \
+            -o data/awe/awe.csv
+          echo "AWE CSV rows: $(wc -l < data/awe/awe.csv)"
+
+      - name: Fetch AWE JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,AWE?dimension=Measure=1&format=JSON" \
+            -o data/awe/awe.json
+          echo "AWE JSON: $(wc -c < data/awe/awe.json) bytes"
+
+      - name: Fetch WPI CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,WPI?dimension=Measure=1&format=CSV" \
+            -o data/wpi/wpi.csv
+          echo "WPI CSV rows: $(wc -l < data/wpi/wpi.csv)"
+
+      - name: Fetch WPI JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,WPI?dimension=Measure=1&format=JSON" \
+            -o data/wpi/wpi.json
+          echo "WPI JSON: $(wc -c < data/wpi/wpi.json) bytes"
+
+      - name: Fetch LCI CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=CSV" \
+            -o data/lci/lci.csv
+          echo "LCI CSV rows: $(wc -l < data/lci/lci.csv)"
+
+      - name: Fetch LCI JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=JSON" \
+            -o data/lci/lci.json
+          echo "LCI JSON: $(wc -c < data/lci/lci.json) bytes"
+
+      - name: Fetch Population CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,ERP_COMP_Q?dimension=Measure=10&Region=AUS&Freq=Q&format=CSV" \
+            -o data/population/population.csv
+          echo "Population CSV rows: $(wc -l < data/population/population.csv)"
+
+      - name: Fetch Population JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,ERP_COMP_Q?dimension=Measure=10&Region=AUS&Freq=Q&format=JSON" \
+            -o data/population/population.json
+          echo "Population JSON: $(wc -c < data/population/population.json) bytes"
+
+      - name: Fetch GDP CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,ANA_AGG?dimension=Measure=M1&Data-Item=GPM&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
+            -o data/gdp/gdp.csv
+          echo "GDP CSV rows: $(wc -l < data/gdp/gdp.csv)"
+
+      - name: Fetch GDP JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,ANA_AGG?dimension=Measure=M1&Data-Item=GPM&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
+            -o data/gdp/gdp.json
+          echo "GDP JSON: $(wc -c < data/gdp/gdp.json) bytes"
+
+      - name: Fetch Households CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,ABS_HH_PROV?dimension=ASGS_2011_STATE_GCCSA_SA4_SA3_SA2=0&HH-Type=4&Proj-Series=1&Frequency=Q&format=CSV" \
+            -o data/households/households.csv
+          echo "Households CSV rows: $(wc -l < data/households/households.csv)"
+
+      - name: Fetch Households JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,ABS_HH_PROV?dimension=ASGS_2011_STATE_GCCSA_SA4_SA3_SA2=0&HH-Type=4&Proj-Series=1&Frequency=Q&format=JSON" \
+            -o data/households/households.json
+          echo "Households JSON: $(wc -c < data/households/households.json) bytes"
+
+      - name: Fetch Building Activity CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,BUILDING_ACTIVITY?dimension=Measure=M6&Region=AUS&Price-Adj=CUR&Bld-Work-Type=TOT&Sector-Own=9&Type-Bldg=100&TSEST=20&Freq=Q&format=CSV" \
+            -o data/building_activity/building_activity.csv
+          echo "Building Activity CSV rows: $(wc -l < data/building_activity/building_activity.csv)"
+
+      - name: Fetch Building Activity JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,BUILDING_ACTIVITY?dimension=Measure=M6&Region=AUS&Price-Adj=CUR&Bld-Work-Type=TOT&Sector-Own=9&Type-Bldg=100&TSEST=20&Freq=Q&format=JSON" \
+            -o data/building_activity/building_activity.json
+          echo "Building Activity JSON: $(wc -c < data/building_activity/building_activity.json) bytes"
+
+      - name: Fetch Housing Lending CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,LEND_HOUSING?dimension=Measure=FIN_NUM&Data-Item=NEWCOMMITS&Loan-Type=DV8575&Loan-Purpose=TOTLOANPURP&Lender-Type=TOT&Housing-Purpose=TOT&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
+            -o data/lending_housing/lending_housing.csv
+          echo "Housing Lending CSV rows: $(wc -l < data/lending_housing/lending_housing.csv)"
+
+      - name: Fetch Housing Lending JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,LEND_HOUSING?dimension=Measure=FIN_NUM&Data-Item=NEWCOMMITS&Loan-Type=DV8575&Loan-Purpose=TOTLOANPURP&Lender-Type=TOT&Housing-Purpose=TOT&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
+            -o data/lending_housing/lending_housing.json
+          echo "Housing Lending JSON: $(wc -c < data/lending_housing/lending_housing.json) bytes"
+
+      - name: Fetch Labour Account CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,LABOUR_ACCT_Q?dimension=TSEST=20&Freq=Q&Measure=TOTAL&LabourAcct-Ind=TOTAL&ASGS-2016=AUS&format=CSV" \
+            -o data/labour_account/labour_account.csv
+          echo "Labour Account CSV rows: $(wc -l < data/labour_account/labour_account.csv)"
+
+      - name: Fetch Labour Account JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,LABOUR_ACCT_Q?dimension=TSEST=20&Freq=Q&Measure=TOTAL&LabourAcct-Ind=TOTAL&ASGS-2016=AUS&format=JSON" \
+            -o data/labour_account/labour_account.json
+          echo "Labour Account JSON: $(wc -c < data/labour_account/labour_account.json) bytes"
+
+      - name: Fetch Household Spending CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,HSI_Q?dimension=Measure=4&Category=TOT&Price-Adjustment=CVM&TSEST=20&State=AUS&Freq=Q&format=CSV" \
+            -o data/household_spending/household_spending.csv
+          echo "Household Spending CSV rows: $(wc -l < data/household_spending/household_spending.csv)"
+
+      - name: Fetch Household Spending JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,HSI_Q?dimension=Measure=4&Category=TOT&Price-Adjustment=CVM&TSEST=20&State=AUS&Freq=Q&format=JSON" \
+            -o data/household_spending/household_spending.json
+          echo "Household Spending JSON: $(wc -c < data/household_spending/household_spending.json) bytes"
+
+      - name: Fetch Labour Force CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,LF?dimension=Measure=M9&Sex=3&Age=1599&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
+            -o data/labour_force/labour_force.csv
+          echo "Labour Force CSV rows: $(wc -l < data/labour_force/labour_force.csv)"
+
+      - name: Fetch Labour Force JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,LF?dimension=Measure=M9&Sex=3&Age=1599&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
+            -o data/labour_force/labour_force.json
+          echo "Labour Force JSON: $(wc -c < data/labour_force/labour_force.json) bytes"
+
+      - name: Validate downloads
+        run: |
+          for f in data/cpi/cpi.csv data/cpi/cpi.json \
+                   data/awe/awe.csv data/awe/awe.json \
+                   data/wpi/wpi.csv data/wpi/wpi.json \
+                   data/lci/lci.csv data/lci/lci.json \
+                   data/population/population.csv data/population/population.json \
+                   data/gdp/gdp.csv data/gdp/gdp.json \
+                   data/households/households.csv data/households/households.json \
+                   data/building_activity/building_activity.csv data/building_activity/building_activity.json \
+                   data/lending_housing/lending_housing.csv data/lending_housing/lending_housing.json \
+                   data/labour_account/labour_account.csv data/labour_account/labour_account.json \
+                   data/household_spending/household_spending.csv data/household_spending/household_spending.json \
+                   data/labour_force/labour_force.csv data/labour_force/labour_force.json; do
+            if [ ! -s "$f" ]; then
+              echo "ERROR: $f is empty or missing"
+              exit 1
+            fi
+            echo "OK: $f ($(wc -c < $f) bytes)"
           done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,AWE?dimension=Measure=1&format=JSON" \
-              -o data/awe/awe.json && break
-            echo "Retry $i/3 for AWE JSON" >&2
-            sleep 5
-          done
-          test -s data/awe/awe.csv
+
+      - name: Write fetch metadata
+        run: |
+          echo '{"fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","sources":{}}' > data/cpi/cpi.meta.json
           echo '{"dataflow":"ABS,AWE","key":"1","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/awe/awe.meta.json
-
-      - name: Fetch WPI
-        run: |
-          mkdir -p data/wpi
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,WPI?dimension=Measure=1&format=CSV" \
-              -o data/wpi/wpi.csv && break
-            echo "Retry $i/3 for WPI CSV" >&2
-            sleep 5
-          done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,WPI?dimension=Measure=1&format=JSON" \
-              -o data/wpi/wpi.json && break
-            echo "Retry $i/3 for WPI JSON" >&2
-            sleep 5
-          done
-          test -s data/wpi/wpi.csv
           echo '{"dataflow":"ABS,WPI","key":"1","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/wpi/wpi.meta.json
-
-      - name: Fetch LCI
-        run: |
-          mkdir -p data/lci
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=CSV" \
-              -o data/lci/lci.csv && break
-            echo "Retry $i/3 for LCI CSV" >&2
-            sleep 5
-          done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=JSON" \
-              -o data/lci/lci.json && break
-            echo "Retry $i/3 for LCI JSON" >&2
-            sleep 5
-          done
-          test -s data/lci/lci.csv
           echo '{"dataflow":"ABS,LCI","key":"1","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lci/lci.meta.json
-
-      - name: Fetch Population
-        run: |
-          mkdir -p data/population
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,ERP_COMP_Q?dimension=Measure=10&Region=AUS&Freq=Q&format=CSV" \
-              -o data/population/population.csv && break
-            echo "Retry $i/3 for Population CSV" >&2
-            sleep 5
-          done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,ERP_COMP_Q?dimension=Measure=10&Region=AUS&Freq=Q&format=JSON" \
-              -o data/population/population.json && break
-            echo "Retry $i/3 for Population JSON" >&2
-            sleep 5
-          done
-          test -s data/population/population.csv
           echo '{"dataflow":"ABS,ERP_COMP_Q","key":"10.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/population/population.meta.json
-
-      - name: Fetch GDP
-        run: |
-          mkdir -p data/gdp
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,ANA_AGG?dimension=Measure=M1&Data-Item=GPM&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
-              -o data/gdp/gdp.csv && break
-            echo "Retry $i/3 for GDP CSV" >&2
-            sleep 5
-          done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,ANA_AGG?dimension=Measure=M1&Data-Item=GPM&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
-              -o data/gdp/gdp.json && break
-            echo "Retry $i/3 for GDP JSON" >&2
-            sleep 5
-          done
-          test -s data/gdp/gdp.csv
           echo '{"dataflow":"ABS,ANA_AGG","key":"M1.GPM.20.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/gdp/gdp.meta.json
-
-      - name: Fetch Households
-        run: |
-          mkdir -p data/households
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,ABS_HH_PROV?dimension=ASGS_2011_STATE_GCCSA_SA4_SA3_SA2=0&HH-Type=4&Proj-Series=1&Frequency=Q&format=CSV" \
-              -o data/households/households.csv && break
-            echo "Retry $i/3 for Households CSV" >&2
-            sleep 5
-          done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,ABS_HH_PROV?dimension=ASGS_2011_STATE_GCCSA_SA4_SA3_SA2=0&HH-Type=4&Proj-Series=1&Frequency=Q&format=JSON" \
-              -o data/households/households.json && break
-            echo "Retry $i/3 for Households JSON" >&2
-            sleep 5
-          done
-          test -s data/households/households.csv
           echo '{"dataflow":"ABS,ABS_HH_PROV","key":"0.4.1.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/households/households.meta.json
-
-      - name: Fetch Building Activity
-        run: |
-          mkdir -p data/building_activity
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,BUILDING_ACTIVITY?dimension=Measure=M6&Region=AUS&Price-Adj=CUR&Bld-Work-Type=TOT&Sector-Own=9&Type-Bldg=100&TSEST=20&Freq=Q&format=CSV" \
-              -o data/building_activity/building_activity.csv && break
-            echo "Retry $i/3 for Building Activity CSV" >&2
-            sleep 5
-          done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,BUILDING_ACTIVITY?dimension=Measure=M6&Region=AUS&Price-Adj=CUR&Bld-Work-Type=TOT&Sector-Own=9&Type-Bldg=100&TSEST=20&Freq=Q&format=JSON" \
-              -o data/building_activity/building_activity.json && break
-            echo "Retry $i/3 for Building Activity JSON" >&2
-            sleep 5
-          done
-          test -s data/building_activity/building_activity.csv
           echo '{"dataflow":"ABS,BUILDING_ACTIVITY","key":"M6.AUS.CUR.TOT.9.100.20.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/building_activity/building_activity.meta.json
-
-      - name: Fetch Housing Lending
-        run: |
-          mkdir -p data/lending_housing
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,LEND_HOUSING?dimension=Measure=FIN_NUM&Data-Item=NEWCOMMITS&Loan-Type=DV8575&Loan-Purpose=TOTLOANPURP&Lender-Type=TOT&Housing-Purpose=TOT&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
-              -o data/lending_housing/lending_housing.csv && break
-            echo "Retry $i/3 for Housing Lending CSV" >&2
-            sleep 5
-          done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,LEND_HOUSING?dimension=Measure=FIN_NUM&Data-Item=NEWCOMMITS&Loan-Type=DV8575&Loan-Purpose=TOTLOANPURP&Lender-Type=TOT&Housing-Purpose=TOT&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
-              -o data/lending_housing/lending_housing.json && break
-            echo "Retry $i/3 for Housing Lending JSON" >&2
-            sleep 5
-          done
-          test -s data/lending_housing/lending_housing.csv
           echo '{"dataflow":"ABS,LEND_HOUSING","key":"FIN_NUM.NEWCOMMITS.DV8575.TOTLOANPURP.TOT.TOT.20.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lending_housing/lending_housing.meta.json
-
-      - name: Fetch Labour Account
-        run: |
-          mkdir -p data/labour_account
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,LABOUR_ACCT_Q?dimension=TSEST=20&Freq=Q&Measure=TOTAL&LabourAcct-Ind=TOTAL&ASGS-2016=AUS&format=CSV" \
-              -o data/labour_account/labour_account.csv && break
-            echo "Retry $i/3 for Labour Account CSV" >&2
-            sleep 5
-          done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,LABOUR_ACCT_Q?dimension=TSEST=20&Freq=Q&Measure=TOTAL&LabourAcct-Ind=TOTAL&ASGS-2016=AUS&format=JSON" \
-              -o data/labour_account/labour_account.json && break
-            echo "Retry $i/3 for Labour Account JSON" >&2
-            sleep 5
-          done
-          test -s data/labour_account/labour_account.csv
           echo '{"dataflow":"ABS,LABOUR_ACCT_Q","key":"20.Q.TOTAL.TOTAL.AUS","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/labour_account/labour_account.meta.json
-
-      - name: Fetch Household Spending Indicator
-        run: |
-          mkdir -p data/household_spending
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,HSI_Q?dimension=Measure=4&Category=TOT&Price-Adjustment=CVM&TSEST=20&State=AUS&Freq=Q&format=CSV" \
-              -o data/household_spending/household_spending.csv && break
-            echo "Retry $i/3 for Household Spending CSV" >&2
-            sleep 5
-          done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,HSI_Q?dimension=Measure=4&Category=TOT&Price-Adjustment=CVM&TSEST=20&State=AUS&Freq=Q&format=JSON" \
-              -o data/household_spending/household_spending.json && break
-            echo "Retry $i/3 for Household Spending JSON" >&2
-            sleep 5
-          done
-          test -s data/household_spending/household_spending.csv
           echo '{"dataflow":"ABS,HSI_Q","key":"4.TOT.CVM.20.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/household_spending/household_spending.meta.json
-
-      - name: Fetch Labour Force
-        run: |
-          mkdir -p data/labour_force
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,LF?dimension=Measure=M9&Sex=3&Age=1599&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
-              -o data/labour_force/labour_force.csv && break
-            echo "Retry $i/3 for Labour Force CSV" >&2
-            sleep 5
-          done
-          for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,LF?dimension=Measure=M9&Sex=3&Age=1599&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
-              -o data/labour_force/labour_force.json && break
-            echo "Retry $i/3 for Labour Force JSON" >&2
-            sleep 5
-          done
-          test -s data/labour_force/labour_force.csv
           echo '{"dataflow":"ABS,LF","key":"M9.3.1599.20.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/labour_force/labour_force.meta.json
-
-      - name: Generate fetch metadata
-        run: |
-          node -e "
-            const fs = require('fs');
-            const meta = {};
-            for (const dir of ['cpi','cpigroups','cpihousing','awe','lci','lcigroups','wpi','population','gdp','households','building_activity','lending_housing','labour_account','household_spending','labour_force']) {
-              try {
-                const content = fs.readFileSync('data/' + dir + '/' + dir + '.csv', 'utf8');
-                const lines = content.trim().split('\n');
-                meta[dir] = { rows: lines.length - 1, lastUpdated: new Date().toISOString() };
-              } catch (e) { meta[dir] = { error: e.message }; }
-            }
-            fs.writeFileSync('data/fetch-metadata.json', JSON.stringify(meta, null, 2));
-          "
 
       - name: Commit and push
         run: |
-          git config user.name "absvis-bot"
-          git config user.email "bot@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/x-byrne/kilo.git
           git add data/
-          git diff --cached --quiet || git commit -m "chore: update ABS data snapshots"
-          git push
+          if git diff --staged --quiet; then
+            echo "No data changes detected — ABS has not updated since last run."
+          else
+            TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+            git commit -m "data: ABS snapshot ${TIMESTAMP}
+
+          Updated files:
+          $(git diff --staged --name-only)"
+            git push
+          fi

@@ -1,12 +1,13 @@
 import { parseCSV, periodToNum } from './parser.js';
 
 export class DataLoader {
-  constructor(baseUrl = 'https://cdn.jsdelivr.net/gh') {
+  constructor(baseUrl = 'https://cdn.jsdelivr.net/gh', repo = 'x-byrne/kilo@main') {
     this.baseUrl = baseUrl;
+    this.repo = repo;
   }
 
   async load(id) {
-    const url = `${this.baseUrl}/convoy/absvis-data@main/data/${id}/${id}.csv`;
+    const url = `${this.baseUrl}/${this.repo}/data/${id}/${id}.csv`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Failed to load ${id}: ${res.status}`);
     const text = await res.text();
