@@ -1,62 +1,62 @@
 {
   "cpi": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.988Z"
+    "lastUpdated": "2026-08-12T06:09:59.027Z"
   },
   "cpigroups": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "cpihousing": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "awe": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "lci": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "lcigroups": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "wpi": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "population": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "gdp": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "households": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "building_activity": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "lending_housing": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "labour_account": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "household_spending": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.032Z"
   },
   "labour_force": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:31:36.989Z"
+    "lastUpdated": "2026-08-12T06:09:59.033Z"
   }
 }
