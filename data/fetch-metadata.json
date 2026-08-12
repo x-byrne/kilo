@@ -1,0 +1,62 @@
+{
+  "cpi": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.988Z"
+  },
+  "cpigroups": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "cpihousing": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "awe": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "lci": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "lcigroups": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "wpi": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "population": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "gdp": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "households": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "building_activity": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "lending_housing": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "labour_account": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "household_spending": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  },
+  "labour_force": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
+  }
+}
