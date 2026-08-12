@@ -18,7 +18,7 @@ jobs:
 
       - name: Create data directories
         run: |
-          mkdir -p data/cpi data/awe data/wpi data/lci data/population data/gdp data/households data/building_activity data/lending_housing data/labour_account data/household_spending data/labour_force
+          mkdir -p data/cpi data/cpigroups data/cpihousing data/awe data/wpi data/lci data/lcigroups data/population data/gdp data/households data/building_activity data/lending_housing data/labour_account data/household_spending data/labour_force
 
       - name: Fetch CPI CSV
         run: |
@@ -39,6 +39,46 @@ jobs:
             "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=JSON" \
             -o data/cpi/cpi.json
           echo "CPI JSON: $(wc -c < data/cpi/cpi.json) bytes"
+
+      - name: Fetch CPI Groups CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1.GP&format=CSV" \
+            -o data/cpigroups/cpigroups.csv
+          echo "CPI Groups CSV rows: $(wc -l < data/cpigroups/cpigroups.csv)"
+
+      - name: Fetch CPI Groups JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1.GP&format=JSON" \
+            -o data/cpigroups/cpigroups.json
+          echo "CPI Groups JSON: $(wc -c < data/cpigroups/cpigroups.json) bytes"
+
+      - name: Fetch CPI Housing CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=04&format=CSV" \
+            -o data/cpihousing/cpihousing.csv
+          echo "CPI Housing CSV rows: $(wc -l < data/cpihousing/cpihousing.csv)"
+
+      - name: Fetch CPI Housing JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=04&format=JSON" \
+            -o data/cpihousing/cpihousing.json
+          echo "CPI Housing JSON: $(wc -c < data/cpihousing/cpihousing.json) bytes"
 
       - name: Fetch AWE CSV
         run: |
@@ -99,6 +139,26 @@ jobs:
             "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=JSON" \
             -o data/lci/lci.json
           echo "LCI JSON: $(wc -c < data/lci/lci.json) bytes"
+
+      - name: Fetch LCI Groups CSV
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1.GP&format=CSV" \
+            -o data/lcigroups/lcigroups.csv
+          echo "LCI Groups CSV rows: $(wc -l < data/lcigroups/lcigroups.csv)"
+
+      - name: Fetch LCI Groups JSON
+        run: |
+          curl --silent --show-error --fail \
+            --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/json" \
+            "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1.GP&format=JSON" \
+            -o data/lcigroups/lcigroups.json
+          echo "LCI Groups JSON: $(wc -c < data/lcigroups/lcigroups.json) bytes"
 
       - name: Fetch Population CSV
         run: |
@@ -263,9 +323,12 @@ jobs:
       - name: Validate downloads
         run: |
           for f in data/cpi/cpi.csv data/cpi/cpi.json \
+                   data/cpigroups/cpigroups.csv data/cpigroups/cpigroups.json \
+                   data/cpihousing/cpihousing.csv data/cpihousing/cpihousing.json \
                    data/awe/awe.csv data/awe/awe.json \
                    data/wpi/wpi.csv data/wpi/wpi.json \
                    data/lci/lci.csv data/lci/lci.json \
+                   data/lcigroups/lcigroups.csv data/lcigroups/lcigroups.json \
                    data/population/population.csv data/population/population.json \
                    data/gdp/gdp.csv data/gdp/gdp.json \
                    data/households/households.csv data/households/households.json \
@@ -284,9 +347,12 @@ jobs:
       - name: Write fetch metadata
         run: |
           echo '{"fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","sources":{}}' > data/cpi/cpi.meta.json
+          echo '{"dataflow":"ABS,CPI","key":"1.GP","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/cpigroups/cpigroups.meta.json
+          echo '{"dataflow":"ABS,CPI","key":"04","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/cpihousing/cpihousing.meta.json
           echo '{"dataflow":"ABS,AWE","key":"1","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/awe/awe.meta.json
           echo '{"dataflow":"ABS,WPI","key":"1","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/wpi/wpi.meta.json
           echo '{"dataflow":"ABS,LCI","key":"1","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lci/lci.meta.json
+          echo '{"dataflow":"ABS,LCI","key":"1.GP","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lcigroups/lcigroups.meta.json
           echo '{"dataflow":"ABS,ERP_COMP_Q","key":"10.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/population/population.meta.json
           echo '{"dataflow":"ABS,ANA_AGG","key":"M1.GPM.20.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/gdp/gdp.meta.json
           echo '{"dataflow":"ABS,ABS_HH_PROV","key":"0.4.1.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/households/households.meta.json
@@ -312,3 +378,11 @@ jobs:
           $(git diff --staged --name-only)"
             git push
           fi
+
+      - name: Purge jsDelivr CDN cache
+        run: |
+          for d in cpi cpigroups cpihousing awe wpi lci lcigroups population gdp households building_activity lending_housing labour_account household_spending labour_force; do
+            curl --silent --show-error --fail \
+              "https://purge.jsdelivr.net/gh/x-byrne/kilo@main/data/${d}/${d}.csv" \
+              || echo "CDN purge non-fatal: ${d}"
+          done
