@@ -13,35 +13,20 @@ jobs:
       ABS_API: "https://data.api.abs.gov.au/rest/data"
       USER_AGENT: "ABSVisFramework/1.0 (github-actions; open-source research)"
       CPI_DATAFLOW: "ABS,CPI"
-      CPI_KEY: "1.10001.10.50.Q"
       CPIGROUPS_DATAFLOW: "ABS,CPI"
-      CPIGROUPS_KEY: "1.10001+20001+20002+20003+20004+20005+20006+115486+115488+115489+115493+126670.10.50.Q"
       CPIHOUSING_DATAFLOW: "ABS,CPI"
-      CPIHOUSING_KEY: "1.20003+30014+40053+40055+97558+97559+97560+115524.10.50.Q"
       AWE_DATAFLOW: "ABS,AWE"
-      AWE_KEY: "3.1.3.7.TOT.10.AUS.S"
       LCI_DATAFLOW: "ABS,LCI"
-      LCI_KEY: "1.10001.P1.50.Q"
       LCIGROUPS_DATAFLOW: "ABS,LCI"
-      LCIGROUPS_KEY: "1.10001+20001+20002+20003+20004+20005+20006+115486+115488+115489+115493+126670+131278+131279.P1.50.Q"
       WPI_DATAFLOW: "ABS,WPI"
-      WPI_KEY: "1.THRPEB.7.TOT.20.AUS.Q"
       POPULATION_DATAFLOW: "ABS,ERP_COMP_Q"
-      POPULATION_KEY: "10.AUS.Q"
       GDP_DATAFLOW: "ABS,ANA_AGG"
-      GDP_KEY: "M1.GPM.20.AUS.Q"
       HOUSEHOLDS_DATAFLOW: "ABS,ABS_HH_PROV"
-      HOUSEHOLDS_KEY: "0.4.1.Q"
       BUILDING_ACTIVITY_DATAFLOW: "ABS,BUILDING_ACTIVITY"
-      BUILDING_ACTIVITY_KEY: "M6.AUS.CUR.TOT.9.100.20.Q"
       LENDING_HOUSING_DATAFLOW: "ABS,LEND_HOUSING"
-      LENDING_HOUSING_KEY: "FIN_NUM.NEWCOMMITS.DV8575.TOTLOANPURP.TOT.TOT.20.AUS.Q"
       LABOUR_ACCOUNT_DATAFLOW: "ABS,LABOUR_ACCT_Q"
-      LABOUR_ACCOUNT_KEY: "20.Q.TOTAL.TOTAL.AUS"
       HOUSEHOLD_SPENDING_DATAFLOW: "ABS,HSI_Q"
-      HOUSEHOLD_SPENDING_KEY: "4.TOT.CVM.20.AUS.Q"
       LABOUR_FORCE_DATAFLOW: "ABS,LF"
-      LABOUR_FORCE_KEY: "M9.3.1599.20.AUS.Q"
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -55,7 +40,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$CPI_DATAFLOW/$CPI_KEY?detail=dataonly" \
+            "$ABS_API/$CPI_DATAFLOW?detail=dataonly" \
             -o data/cpi/cpi.csv
           echo "CPI CSV rows: $(wc -l < data/cpi/cpi.csv)"
 
@@ -64,7 +49,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$CPI_DATAFLOW/$CPI_KEY?detail=full" \
+            "$ABS_API/$CPI_DATAFLOW?detail=full" \
             -o data/cpi/cpi.json
           echo "CPI JSON: $(wc -c < data/cpi/cpi.json) bytes"
 
@@ -73,7 +58,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$CPIGROUPS_DATAFLOW/$CPIGROUPS_KEY?detail=dataonly" \
+            "$ABS_API/$CPIGROUPS_DATAFLOW?detail=dataonly" \
             -o data/cpigroups/cpigroups.csv
           echo "CPIgroups CSV rows: $(wc -l < data/cpigroups/cpigroups.csv)"
 
@@ -82,7 +67,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$CPIGROUPS_DATAFLOW/$CPIGROUPS_KEY?detail=full" \
+            "$ABS_API/$CPIGROUPS_DATAFLOW?detail=full" \
             -o data/cpigroups/cpigroups.json
           echo "CPIgroups JSON: $(wc -c < data/cpigroups/cpigroups.json) bytes"
 
@@ -91,7 +76,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$CPIHOUSING_DATAFLOW/$CPIHOUSING_KEY?detail=dataonly" \
+            "$ABS_API/$CPIHOUSING_DATAFLOW?detail=dataonly" \
             -o data/cpihousing/cpihousing.csv
           echo "CPIhousing CSV rows: $(wc -l < data/cpihousing/cpihousing.csv)"
 
@@ -100,7 +85,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$CPIHOUSING_DATAFLOW/$CPIHOUSING_KEY?detail=full" \
+            "$ABS_API/$CPIHOUSING_DATAFLOW?detail=full" \
             -o data/cpihousing/cpihousing.json
           echo "CPIhousing JSON: $(wc -c < data/cpihousing/cpihousing.json) bytes"
 
@@ -109,7 +94,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$AWE_DATAFLOW/$AWE_KEY?detail=dataonly" \
+            "$ABS_API/$AWE_DATAFLOW?detail=dataonly" \
             -o data/awe/awe.csv
           echo "AWE CSV rows: $(wc -l < data/awe/awe.csv)"
 
@@ -118,7 +103,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$AWE_DATAFLOW/$AWE_KEY?detail=full" \
+            "$ABS_API/$AWE_DATAFLOW?detail=full" \
             -o data/awe/awe.json
           echo "AWE JSON: $(wc -c < data/awe/awe.json) bytes"
 
@@ -127,7 +112,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$LCI_DATAFLOW/$LCI_KEY?detail=dataonly" \
+            "$ABS_API/$LCI_DATAFLOW?detail=dataonly" \
             -o data/lci/lci.csv
           echo "LCI CSV rows: $(wc -l < data/lci/lci.csv)"
 
@@ -136,7 +121,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$LCI_DATAFLOW/$LCI_KEY?detail=full" \
+            "$ABS_API/$LCI_DATAFLOW?detail=full" \
             -o data/lci/lci.json
           echo "LCI JSON: $(wc -c < data/lci/lci.json) bytes"
 
@@ -145,7 +130,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$LCIGROUPS_DATAFLOW/$LCIGROUPS_KEY?detail=dataonly" \
+            "$ABS_API/$LCIGROUPS_DATAFLOW?detail=dataonly" \
             -o data/lcigroups/lcigroups.csv
           echo "LCIgroups CSV rows: $(wc -l < data/lcigroups/lcigroups.csv)"
 
@@ -154,7 +139,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$LCIGROUPS_DATAFLOW/$LCIGROUPS_KEY?detail=full" \
+            "$ABS_API/$LCIGROUPS_DATAFLOW?detail=full" \
             -o data/lcigroups/lcigroups.json
           echo "LCIgroups JSON: $(wc -c < data/lcigroups/lcigroups.json) bytes"
 
@@ -163,7 +148,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$WPI_DATAFLOW/$WPI_KEY?detail=dataonly" \
+            "$ABS_API/$WPI_DATAFLOW?detail=dataonly" \
             -o data/wpi/wpi.csv
           echo "WPI CSV rows: $(wc -l < data/wpi/wpi.csv)"
 
@@ -172,7 +157,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$WPI_DATAFLOW/$WPI_KEY?detail=full" \
+            "$ABS_API/$WPI_DATAFLOW?detail=full" \
             -o data/wpi/wpi.json
           echo "WPI JSON: $(wc -c < data/wpi/wpi.json) bytes"
 
@@ -181,7 +166,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$POPULATION_DATAFLOW/$POPULATION_KEY?detail=dataonly" \
+            "$ABS_API/$POPULATION_DATAFLOW?detail=dataonly" \
             -o data/population/population.csv
           echo "Population CSV rows: $(wc -l < data/population/population.csv)"
 
@@ -190,7 +175,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$POPULATION_DATAFLOW/$POPULATION_KEY?detail=full" \
+            "$ABS_API/$POPULATION_DATAFLOW?detail=full" \
             -o data/population/population.json
           echo "Population JSON: $(wc -c < data/population/population.json) bytes"
 
@@ -199,7 +184,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$GDP_DATAFLOW/$GDP_KEY?detail=dataonly" \
+            "$ABS_API/$GDP_DATAFLOW?detail=dataonly" \
             -o data/gdp/gdp.csv
           echo "GDP CSV rows: $(wc -l < data/gdp/gdp.csv)"
 
@@ -208,7 +193,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$GDP_DATAFLOW/$GDP_KEY?detail=full" \
+            "$ABS_API/$GDP_DATAFLOW?detail=full" \
             -o data/gdp/gdp.json
           echo "GDP JSON: $(wc -c < data/gdp/gdp.json) bytes"
 
@@ -217,7 +202,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$HOUSEHOLDS_DATAFLOW/$HOUSEHOLDS_KEY?detail=dataonly" \
+            "$ABS_API/$HOUSEHOLDS_DATAFLOW?detail=dataonly" \
             -o data/households/households.csv
           echo "Households CSV rows: $(wc -l < data/households/households.csv)"
 
@@ -226,7 +211,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$HOUSEHOLDS_DATAFLOW/$HOUSEHOLDS_KEY?detail=full" \
+            "$ABS_API/$HOUSEHOLDS_DATAFLOW?detail=full" \
             -o data/households/households.json
           echo "Households JSON: $(wc -c < data/households/households.json) bytes"
 
@@ -235,7 +220,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$BUILDING_ACTIVITY_DATAFLOW/$BUILDING_ACTIVITY_KEY?detail=dataonly" \
+            "$ABS_API/$BUILDING_ACTIVITY_DATAFLOW?detail=dataonly" \
             -o data/building_activity/building_activity.csv
           echo "Building Activity CSV rows: $(wc -l < data/building_activity/building_activity.csv)"
 
@@ -244,7 +229,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$BUILDING_ACTIVITY_DATAFLOW/$BUILDING_ACTIVITY_KEY?detail=full" \
+            "$ABS_API/$BUILDING_ACTIVITY_DATAFLOW?detail=full" \
             -o data/building_activity/building_activity.json
           echo "Building Activity JSON: $(wc -c < data/building_activity/building_activity.json) bytes"
 
@@ -253,7 +238,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$LENDING_HOUSING_DATAFLOW/$LENDING_HOUSING_KEY?detail=dataonly" \
+            "$ABS_API/$LENDING_HOUSING_DATAFLOW?detail=dataonly" \
             -o data/lending_housing/lending_housing.csv
           echo "Housing Lending CSV rows: $(wc -l < data/lending_housing/lending_housing.csv)"
 
@@ -262,7 +247,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$LENDING_HOUSING_DATAFLOW/$LENDING_HOUSING_KEY?detail=full" \
+            "$ABS_API/$LENDING_HOUSING_DATAFLOW?detail=full" \
             -o data/lending_housing/lending_housing.json
           echo "Housing Lending JSON: $(wc -c < data/lending_housing/lending_housing.json) bytes"
 
@@ -271,7 +256,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$LABOUR_ACCOUNT_DATAFLOW/$LABOUR_ACCOUNT_KEY?detail=dataonly" \
+            "$ABS_API/$LABOUR_ACCOUNT_DATAFLOW?detail=dataonly" \
             -o data/labour_account/labour_account.csv
           echo "Labour Account CSV rows: $(wc -l < data/labour_account/labour_account.csv)"
 
@@ -280,7 +265,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$LABOUR_ACCOUNT_DATAFLOW/$LABOUR_ACCOUNT_KEY?detail=full" \
+            "$ABS_API/$LABOUR_ACCOUNT_DATAFLOW?detail=full" \
             -o data/labour_account/labour_account.json
           echo "Labour Account JSON: $(wc -c < data/labour_account/labour_account.json) bytes"
 
@@ -289,7 +274,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$HOUSEHOLD_SPENDING_DATAFLOW/$HOUSEHOLD_SPENDING_KEY?detail=dataonly" \
+            "$ABS_API/$HOUSEHOLD_SPENDING_DATAFLOW?detail=dataonly" \
             -o data/household_spending/household_spending.csv
           echo "Household Spending CSV rows: $(wc -l < data/household_spending/household_spending.csv)"
 
@@ -298,7 +283,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$HOUSEHOLD_SPENDING_DATAFLOW/$HOUSEHOLD_SPENDING_KEY?detail=full" \
+            "$ABS_API/$HOUSEHOLD_SPENDING_DATAFLOW?detail=full" \
             -o data/household_spending/household_spending.json
           echo "Household Spending JSON: $(wc -c < data/household_spending/household_spending.json) bytes"
 
@@ -307,7 +292,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "$ABS_API/$LABOUR_FORCE_DATAFLOW/$LABOUR_FORCE_KEY?detail=dataonly" \
+            "$ABS_API/$LABOUR_FORCE_DATAFLOW?detail=dataonly" \
             -o data/labour_force/labour_force.csv
           echo "Labour Force CSV rows: $(wc -l < data/labour_force/labour_force.csv)"
 
@@ -316,7 +301,7 @@ jobs:
           curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
-            "$ABS_API/$LABOUR_FORCE_DATAFLOW/$LABOUR_FORCE_KEY?detail=full" \
+            "$ABS_API/$LABOUR_FORCE_DATAFLOW?detail=full" \
             -o data/labour_force/labour_force.json
           echo "Labour Force JSON: $(wc -c < data/labour_force/labour_force.json) bytes"
 
@@ -347,20 +332,20 @@ jobs:
       - name: Write fetch metadata
         run: |
           echo '{"fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","sources":{}}' > data/cpi/cpi.meta.json
-          echo '{"dataflow":"ABS,CPI","key":"1.10001.10.50.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/cpigroups/cpigroups.meta.json
-          echo '{"dataflow":"ABS,CPI","key":"1.20003+30014+40053+40055+97558+97559+97560+115524.10.50.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/cpihousing/cpihousing.meta.json
-          echo '{"dataflow":"ABS,AWE","key":"3.1.3.7.TOT.10.AUS.S","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/awe/awe.meta.json
-          echo '{"dataflow":"ABS,LCI","key":"1.10001.P1.50.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lci/lci.meta.json
-          echo '{"dataflow":"ABS,LCI","key":"1.10001+20001+20002+20003+20004+20005+20006+115486+115488+115489+115493+126670+131278+131279.P1.50.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lcigroups/lcigroups.meta.json
-          echo '{"dataflow":"ABS,WPI","key":"1.THRPEB.7.TOT.20.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/wpi/wpi.meta.json
-          echo '{"dataflow":"ABS,ERP_COMP_Q","key":"10.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/population/population.meta.json
-          echo '{"dataflow":"ABS,ANA_AGG","key":"M1.GPM.20.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/gdp/gdp.meta.json
-          echo '{"dataflow":"ABS,ABS_HH_PROV","key":"0.4.1.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/households/households.meta.json
-          echo '{"dataflow":"ABS,BUILDING_ACTIVITY","key":"M6.AUS.CUR.TOT.9.100.20.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/building_activity/building_activity.meta.json
-          echo '{"dataflow":"ABS,LEND_HOUSING","key":"FIN_NUM.NEWCOMMITS.DV8575.TOTLOANPURP.TOT.TOT.20.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lending_housing/lending_housing.meta.json
-          echo '{"dataflow":"ABS,LABOUR_ACCT_Q","key":"20.Q.TOTAL.TOTAL.AUS","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/labour_account/labour_account.meta.json
-          echo '{"dataflow":"ABS,HSI_Q","key":"4.TOT.CVM.20.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/household_spending/household_spending.meta.json
-          echo '{"dataflow":"ABS,LF","key":"M9.3.1599.20.AUS.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/labour_force/labour_force.meta.json
+          echo '{"dataflow":"ABS,CPI","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/cpigroups/cpigroups.meta.json
+          echo '{"dataflow":"ABS,CPI","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/cpihousing/cpihousing.meta.json
+          echo '{"dataflow":"ABS,AWE","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/awe/awe.meta.json
+          echo '{"dataflow":"ABS,LCI","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lci/lci.meta.json
+          echo '{"dataflow":"ABS,LCI","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lcigroups/lcigroups.meta.json
+          echo '{"dataflow":"ABS,WPI","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/wpi/wpi.meta.json
+          echo '{"dataflow":"ABS,ERP_COMP_Q","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/population/population.meta.json
+          echo '{"dataflow":"ABS,ANA_AGG","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/gdp/gdp.meta.json
+          echo '{"dataflow":"ABS,ABS_HH_PROV","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/households/households.meta.json
+          echo '{"dataflow":"ABS,BUILDING_ACTIVITY","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/building_activity/building_activity.meta.json
+          echo '{"dataflow":"ABS,LEND_HOUSING","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lending_housing/lending_housing.meta.json
+          echo '{"dataflow":"ABS,LABOUR_ACCT_Q","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/labour_account/labour_account.meta.json
+          echo '{"dataflow":"ABS,HSI_Q","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/household_spending/household_spending.meta.json
+          echo '{"dataflow":"ABS,LF","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/labour_force/labour_force.meta.json
 
       - name: Commit and push
         run: |
