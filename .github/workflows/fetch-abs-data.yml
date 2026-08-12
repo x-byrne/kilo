@@ -15,17 +15,21 @@ jobs:
         run: |
           mkdir -p data/cpi
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=CSV" \
-              -o data/cpi/cpi.csv && break
-            echo "Retry $i/3 for CPI CSV" >&2
+             STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/cpi/cpi.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=CSV")
+            echo "CPI CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for CPI CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=JSON" \
-              -o data/cpi/cpi.json && break
-            echo "Retry $i/3 for CPI JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/cpi/cpi.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=JSON")
+            echo "CPI JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for CPI JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/cpi/cpi.csv
@@ -35,17 +39,21 @@ jobs:
         run: |
           mkdir -p data/awe
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,AWE?dimension=Measure=1&format=CSV" \
-              -o data/awe/awe.csv && break
-            echo "Retry $i/3 for AWE CSV" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/awe/awe.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,AWE?dimension=Measure=1&format=CSV")
+            echo "AWE CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for AWE CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,AWE?dimension=Measure=1&format=JSON" \
-              -o data/awe/awe.json && break
-            echo "Retry $i/3 for AWE JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/awe/awe.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,AWE?dimension=Measure=1&format=JSON")
+            echo "AWE JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for AWE JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/awe/awe.csv
@@ -55,17 +63,21 @@ jobs:
         run: |
           mkdir -p data/wpi
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,WPI?dimension=Measure=1&format=CSV" \
-              -o data/wpi/wpi.csv && break
-            echo "Retry $i/3 for WPI CSV" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/wpi/wpi.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,WPI?dimension=Measure=1&format=CSV")
+            echo "WPI CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for WPI CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,WPI?dimension=Measure=1&format=JSON" \
-              -o data/wpi/wpi.json && break
-            echo "Retry $i/3 for WPI JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/wpi/wpi.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,WPI?dimension=Measure=1&format=JSON")
+            echo "WPI JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for WPI JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/wpi/wpi.csv
@@ -75,17 +87,21 @@ jobs:
         run: |
           mkdir -p data/lci
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=CSV" \
-              -o data/lci/lci.csv && break
-            echo "Retry $i/3 for LCI CSV" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/lci/lci.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=CSV")
+            echo "LCI CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for LCI CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=JSON" \
-              -o data/lci/lci.json && break
-            echo "Retry $i/3 for LCI JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/lci/lci.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=JSON")
+            echo "LCI JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for LCI JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/lci/lci.csv
@@ -95,17 +111,21 @@ jobs:
         run: |
           mkdir -p data/population
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,ERP_COMP_Q?dimension=Measure=10&Region=AUS&Freq=Q&format=CSV" \
-              -o data/population/population.csv && break
-            echo "Retry $i/3 for Population CSV" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/population/population.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,ERP_COMP_Q?dimension=Measure=10&Region=AUS&Freq=Q&format=CSV")
+            echo "Population CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Population CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,ERP_COMP_Q?dimension=Measure=10&Region=AUS&Freq=Q&format=JSON" \
-              -o data/population/population.json && break
-            echo "Retry $i/3 for Population JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/population/population.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,ERP_COMP_Q?dimension=Measure=10&Region=AUS&Freq=Q&format=JSON")
+            echo "Population JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Population JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/population/population.csv
@@ -115,17 +135,21 @@ jobs:
         run: |
           mkdir -p data/gdp
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,ANA_AGG?dimension=Measure=M1&Data-Item=GPM&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
-              -o data/gdp/gdp.csv && break
-            echo "Retry $i/3 for GDP CSV" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/gdp/gdp.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,ANA_AGG?dimension=Measure=M1&Data-Item=GPM&TSEST=20&Region=AUS&Freq=Q&format=CSV")
+            echo "GDP CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for GDP CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,ANA_AGG?dimension=Measure=M1&Data-Item=GPM&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
-              -o data/gdp/gdp.json && break
-            echo "Retry $i/3 for GDP JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/gdp/gdp.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,ANA_AGG?dimension=Measure=M1&Data-Item=GPM&TSEST=20&Region=AUS&Freq=Q&format=JSON")
+            echo "GDP JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for GDP JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/gdp/gdp.csv
@@ -135,17 +159,21 @@ jobs:
         run: |
           mkdir -p data/households
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,ABS_HH_PROV?dimension=ASGS_2011_STATE_GCCSA_SA4_SA3_SA2=0&HH-Type=4&Proj-Series=1&Frequency=Q&format=CSV" \
-              -o data/households/households.csv && break
-            echo "Retry $i/3 for Households CSV" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/households/households.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,ABS_HH_PROV?dimension=ASGS_2011_STATE_GCCSA_SA4_SA3_SA2=0&HH-Type=4&Proj-Series=1&Frequency=Q&format=CSV")
+            echo "Households CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Households CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,ABS_HH_PROV?dimension=ASGS_2011_STATE_GCCSA_SA4_SA3_SA2=0&HH-Type=4&Proj-Series=1&Frequency=Q&format=JSON" \
-              -o data/households/households.json && break
-            echo "Retry $i/3 for Households JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/households/households.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,ABS_HH_PROV?dimension=ASGS_2011_STATE_GCCSA_SA4_SA3_SA2=0&HH-Type=4&Proj-Series=1&Frequency=Q&format=JSON")
+            echo "Households JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Households JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/households/households.csv
@@ -155,17 +183,21 @@ jobs:
         run: |
           mkdir -p data/building_activity
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,BUILDING_ACTIVITY?dimension=Measure=M6&Region=AUS&Price-Adj=CUR&Bld-Work-Type=TOT&Sector-Own=9&Type-Bldg=100&TSEST=20&Freq=Q&format=CSV" \
-              -o data/building_activity/building_activity.csv && break
-            echo "Retry $i/3 for Building Activity CSV" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/building_activity/building_activity.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,BUILDING_ACTIVITY?dimension=Measure=M6&Region=AUS&Price-Adj=CUR&Bld-Work-Type=TOT&Sector-Own=9&Type-Bldg=100&TSEST=20&Freq=Q&format=CSV")
+            echo "Building Activity CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Building Activity CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,BUILDING_ACTIVITY?dimension=Measure=M6&Region=AUS&Price-Adj=CUR&Bld-Work-Type=TOT&Sector-Own=9&Type-Bldg=100&TSEST=20&Freq=Q&format=JSON" \
-              -o data/building_activity/building_activity.json && break
-            echo "Retry $i/3 for Building Activity JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/building_activity/building_activity.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,BUILDING_ACTIVITY?dimension=Measure=M6&Region=AUS&Price-Adj=CUR&Bld-Work-Type=TOT&Sector-Own=9&Type-Bldg=100&TSEST=20&Freq=Q&format=JSON")
+            echo "Building Activity JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Building Activity JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/building_activity/building_activity.csv
@@ -175,17 +207,21 @@ jobs:
         run: |
           mkdir -p data/lending_housing
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,LEND_HOUSING?dimension=Measure=FIN_NUM&Data-Item=NEWCOMMITS&Loan-Type=DV8575&Loan-Purpose=TOTLOANPURP&Lender-Type=TOT&Housing-Purpose=TOT&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
-              -o data/lending_housing/lending_housing.csv && break
-            echo "Retry $i/3 for Housing Lending CSV" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/lending_housing/lending_housing.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,LEND_HOUSING?dimension=Measure=FIN_NUM&Data-Item=NEWCOMMITS&Loan-Type=DV8575&Loan-Purpose=TOTLOANPURP&Lender-Type=TOT&Housing-Purpose=TOT&TSEST=20&Region=AUS&Freq=Q&format=CSV")
+            echo "Housing Lending CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Housing Lending CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,LEND_HOUSING?dimension=Measure=FIN_NUM&Data-Item=NEWCOMMITS&Loan-Type=DV8575&Loan-Purpose=TOTLOANPURP&Lender-Type=TOT&Housing-Purpose=TOT&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
-              -o data/lending_housing/lending_housing.json && break
-            echo "Retry $i/3 for Housing Lending JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/lending_housing/lending_housing.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,LEND_HOUSING?dimension=Measure=FIN_NUM&Data-Item=NEWCOMMITS&Loan-Type=DV8575&Loan-Purpose=TOTLOANPURP&Lender-Type=TOT&Housing-Purpose=TOT&TSEST=20&Region=AUS&Freq=Q&format=JSON")
+            echo "Housing Lending JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Housing Lending JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/lending_housing/lending_housing.csv
@@ -195,17 +231,21 @@ jobs:
         run: |
           mkdir -p data/labour_account
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,LABOUR_ACCT_Q?dimension=TSEST=20&Freq=Q&Measure=TOTAL&LabourAcct-Ind=TOTAL&ASGS-2016=AUS&format=CSV" \
-              -o data/labour_account/labour_account.csv && break
-            echo "Retry $i/3 for Labour Account CSV" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/labour_account/labour_account.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,LABOUR_ACCT_Q?dimension=TSEST=20&Freq=Q&Measure=TOTAL&LabourAcct-Ind=TOTAL&ASGS-2016=AUS&format=CSV")
+            echo "Labour Account CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Labour Account CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,LABOUR_ACCT_Q?dimension=TSEST=20&Freq=Q&Measure=TOTAL&LabourAcct-Ind=TOTAL&ASGS-2016=AUS&format=JSON" \
-              -o data/labour_account/labour_account.json && break
-            echo "Retry $i/3 for Labour Account JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/labour_account/labour_account.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,LABOUR_ACCT_Q?dimension=TSEST=20&Freq=Q&Measure=TOTAL&LabourAcct-Ind=TOTAL&ASGS-2016=AUS&format=JSON")
+            echo "Labour Account JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Labour Account JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/labour_account/labour_account.csv
@@ -215,17 +255,21 @@ jobs:
         run: |
           mkdir -p data/household_spending
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,HSI_Q?dimension=Measure=4&Category=TOT&Price-Adjustment=CVM&TSEST=20&State=AUS&Freq=Q&format=CSV" \
-              -o data/household_spending/household_spending.csv && break
-            echo "Retry $i/3 for Household Spending CSV" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/household_spending/household_spending.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,HSI_Q?dimension=Measure=4&Category=TOT&Price-Adjustment=CVM&TSEST=20&State=AUS&Freq=Q&format=CSV")
+            echo "Household Spending CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Household Spending CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,HSI_Q?dimension=Measure=4&Category=TOT&Price-Adjustment=CVM&TSEST=20&State=AUS&Freq=Q&format=JSON" \
-              -o data/household_spending/household_spending.json && break
-            echo "Retry $i/3 for Household Spending JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/household_spending/household_spending.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,HSI_Q?dimension=Measure=4&Category=TOT&Price-Adjustment=CVM&TSEST=20&State=AUS&Freq=Q&format=JSON")
+            echo "Household Spending JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Household Spending JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/household_spending/household_spending.csv
@@ -235,17 +279,21 @@ jobs:
         run: |
           mkdir -p data/labour_force
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-              "https://data.api.abs.gov.au/data/ABS,LF?dimension=Measure=M9&Sex=3&Age=1599&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
-              -o data/labour_force/labour_force.csv && break
-            echo "Retry $i/3 for Labour Force CSV" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              -o data/labour_force/labour_force.csv -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,LF?dimension=Measure=M9&Sex=3&Age=1599&TSEST=20&Region=AUS&Freq=Q&format=CSV")
+            echo "Labour Force CSV HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Labour Force CSV (HTTP $STATUS)" >&2
             sleep 5
           done
           for i in 1 2 3; do
-            curl -sS -A "absvis-framework" -H "Accept: application/json" \
-              "https://data.api.abs.gov.au/data/ABS,LF?dimension=Measure=M9&Sex=3&Age=1599&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
-              -o data/labour_force/labour_force.json && break
-            echo "Retry $i/3 for Labour Force JSON" >&2
+            STATUS=$(curl -sS -A "ABSVisFramework/1.0 (github-actions; open-source research)" -H "Accept: application/json" \
+              -o data/labour_force/labour_force.json -w "%{http_code}" \
+              "https://data.api.abs.gov.au/data/ABS,LF?dimension=Measure=M9&Sex=3&Age=1599&TSEST=20&Region=AUS&Freq=Q&format=JSON")
+            echo "Labour Force JSON HTTP status: $STATUS"
+            if [ "$STATUS" = "200" ]; then break; fi
+            echo "Retry $i/3 for Labour Force JSON (HTTP $STATUS)" >&2
             sleep 5
           done
           test -s data/labour_force/labour_force.csv
