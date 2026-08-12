@@ -1,0 +1,59 @@
+{
+  "cpi": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  },
+  "cpigroups": {
+    "error": "ENOENT: no such file or directory, open 'data/cpigroups/cpigroups.csv'"
+  },
+  "cpihousing": {
+    "error": "ENOENT: no such file or directory, open 'data/cpihousing/cpihousing.csv'"
+  },
+  "awe": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  },
+  "lci": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  },
+  "lcigroups": {
+    "error": "ENOENT: no such file or directory, open 'data/lcigroups/lcigroups.csv'"
+  },
+  "wpi": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  },
+  "population": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  },
+  "gdp": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  },
+  "households": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  },
+  "building_activity": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  },
+  "lending_housing": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  },
+  "labour_account": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  },
+  "household_spending": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  },
+  "labour_force": {
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:17:20.887Z"
+  }
+}
