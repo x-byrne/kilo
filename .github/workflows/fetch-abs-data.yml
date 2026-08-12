@@ -10,7 +10,7 @@ jobs:
     permissions:
       contents: write
     env:
-      ABS_API: "https://data.api.abs.gov.au/data"
+      ABS_API: "https://data.api.abs.gov.au/rest/data"
       USER_AGENT: "ABSVisFramework/1.0 (github-actions; open-source research)"
     steps:
       - name: Checkout repo
@@ -26,7 +26,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,CPI?detail=dataonly" \
             -o data/cpi/cpi.csv
           echo "CPI CSV rows: $(wc -l < data/cpi/cpi.csv)"
 
@@ -36,7 +36,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,CPI?detail=full" \
             -o data/cpi/cpi.json
           echo "CPI JSON: $(wc -c < data/cpi/cpi.json) bytes"
 
@@ -46,7 +46,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,AWE?dimension=Measure=1&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,AWE?detail=dataonly" \
             -o data/awe/awe.csv
           echo "AWE CSV rows: $(wc -l < data/awe/awe.csv)"
 
@@ -56,7 +56,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,AWE?dimension=Measure=1&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,AWE?detail=full" \
             -o data/awe/awe.json
           echo "AWE JSON: $(wc -c < data/awe/awe.json) bytes"
 
@@ -66,7 +66,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,WPI?dimension=Measure=1&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,WPI?detail=dataonly" \
             -o data/wpi/wpi.csv
           echo "WPI CSV rows: $(wc -l < data/wpi/wpi.csv)"
 
@@ -76,7 +76,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,WPI?dimension=Measure=1&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,WPI?detail=full" \
             -o data/wpi/wpi.json
           echo "WPI JSON: $(wc -c < data/wpi/wpi.json) bytes"
 
@@ -86,7 +86,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,LCI?detail=dataonly" \
             -o data/lci/lci.csv
           echo "LCI CSV rows: $(wc -l < data/lci/lci.csv)"
 
@@ -96,7 +96,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,LCI?detail=full" \
             -o data/lci/lci.json
           echo "LCI JSON: $(wc -c < data/lci/lci.json) bytes"
 
@@ -106,7 +106,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,ERP_COMP_Q?dimension=Measure=10&Region=AUS&Freq=Q&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,ERP_COMP_Q?detail=dataonly" \
             -o data/population/population.csv
           echo "Population CSV rows: $(wc -l < data/population/population.csv)"
 
@@ -116,7 +116,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,ERP_COMP_Q?dimension=Measure=10&Region=AUS&Freq=Q&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,ERP_COMP_Q?detail=full" \
             -o data/population/population.json
           echo "Population JSON: $(wc -c < data/population/population.json) bytes"
 
@@ -126,7 +126,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,ANA_AGG?dimension=Measure=M1&Data-Item=GPM&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,ANA_AGG?detail=dataonly" \
             -o data/gdp/gdp.csv
           echo "GDP CSV rows: $(wc -l < data/gdp/gdp.csv)"
 
@@ -136,7 +136,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,ANA_AGG?dimension=Measure=M1&Data-Item=GPM&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,ANA_AGG?detail=full" \
             -o data/gdp/gdp.json
           echo "GDP JSON: $(wc -c < data/gdp/gdp.json) bytes"
 
@@ -146,7 +146,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,ABS_HH_PROV?dimension=ASGS_2011_STATE_GCCSA_SA4_SA3_SA2=0&HH-Type=4&Proj-Series=1&Frequency=Q&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,ABS_HH_PROV?detail=dataonly" \
             -o data/households/households.csv
           echo "Households CSV rows: $(wc -l < data/households/households.csv)"
 
@@ -156,7 +156,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,ABS_HH_PROV?dimension=ASGS_2011_STATE_GCCSA_SA4_SA3_SA2=0&HH-Type=4&Proj-Series=1&Frequency=Q&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,ABS_HH_PROV?detail=full" \
             -o data/households/households.json
           echo "Households JSON: $(wc -c < data/households/households.json) bytes"
 
@@ -166,7 +166,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,BUILDING_ACTIVITY?dimension=Measure=M6&Region=AUS&Price-Adj=CUR&Bld-Work-Type=TOT&Sector-Own=9&Type-Bldg=100&TSEST=20&Freq=Q&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,BUILDING_ACTIVITY?detail=dataonly" \
             -o data/building_activity/building_activity.csv
           echo "Building Activity CSV rows: $(wc -l < data/building_activity/building_activity.csv)"
 
@@ -176,7 +176,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,BUILDING_ACTIVITY?dimension=Measure=M6&Region=AUS&Price-Adj=CUR&Bld-Work-Type=TOT&Sector-Own=9&Type-Bldg=100&TSEST=20&Freq=Q&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,BUILDING_ACTIVITY?detail=full" \
             -o data/building_activity/building_activity.json
           echo "Building Activity JSON: $(wc -c < data/building_activity/building_activity.json) bytes"
 
@@ -186,7 +186,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,LEND_HOUSING?dimension=Measure=FIN_NUM&Data-Item=NEWCOMMITS&Loan-Type=DV8575&Loan-Purpose=TOTLOANPURP&Lender-Type=TOT&Housing-Purpose=TOT&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,LEND_HOUSING?detail=dataonly" \
             -o data/lending_housing/lending_housing.csv
           echo "Housing Lending CSV rows: $(wc -l < data/lending_housing/lending_housing.csv)"
 
@@ -196,7 +196,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,LEND_HOUSING?dimension=Measure=FIN_NUM&Data-Item=NEWCOMMITS&Loan-Type=DV8575&Loan-Purpose=TOTLOANPURP&Lender-Type=TOT&Housing-Purpose=TOT&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,LEND_HOUSING?detail=full" \
             -o data/lending_housing/lending_housing.json
           echo "Housing Lending JSON: $(wc -c < data/lending_housing/lending_housing.json) bytes"
 
@@ -206,7 +206,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,LABOUR_ACCT_Q?dimension=TSEST=20&Freq=Q&Measure=TOTAL&LabourAcct-Ind=TOTAL&ASGS-2016=AUS&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,LABOUR_ACCT_Q?detail=dataonly" \
             -o data/labour_account/labour_account.csv
           echo "Labour Account CSV rows: $(wc -l < data/labour_account/labour_account.csv)"
 
@@ -216,7 +216,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,LABOUR_ACCT_Q?dimension=TSEST=20&Freq=Q&Measure=TOTAL&LabourAcct-Ind=TOTAL&ASGS-2016=AUS&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,LABOUR_ACCT_Q?detail=full" \
             -o data/labour_account/labour_account.json
           echo "Labour Account JSON: $(wc -c < data/labour_account/labour_account.json) bytes"
 
@@ -226,7 +226,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,HSI_Q?dimension=Measure=4&Category=TOT&Price-Adjustment=CVM&TSEST=20&State=AUS&Freq=Q&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,HSI_Q?detail=dataonly" \
             -o data/household_spending/household_spending.csv
           echo "Household Spending CSV rows: $(wc -l < data/household_spending/household_spending.csv)"
 
@@ -236,7 +236,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,HSI_Q?dimension=Measure=4&Category=TOT&Price-Adjustment=CVM&TSEST=20&State=AUS&Freq=Q&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,HSI_Q?detail=full" \
             -o data/household_spending/household_spending.json
           echo "Household Spending JSON: $(wc -c < data/household_spending/household_spending.json) bytes"
 
@@ -246,7 +246,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
-            "https://data.api.abs.gov.au/data/ABS,LF?dimension=Measure=M9&Sex=3&Age=1599&TSEST=20&Region=AUS&Freq=Q&format=CSV" \
+            "https://data.api.abs.gov.au/rest/data/ABS,LF?detail=dataonly" \
             -o data/labour_force/labour_force.csv
           echo "Labour Force CSV rows: $(wc -l < data/labour_force/labour_force.csv)"
 
@@ -256,7 +256,7 @@ jobs:
             --retry 3 --retry-delay 5 --max-time 60 \
             -H "User-Agent: $USER_AGENT" \
             -H "Accept: application/json" \
-            "https://data.api.abs.gov.au/data/ABS,LF?dimension=Measure=M9&Sex=3&Age=1599&TSEST=20&Region=AUS&Freq=Q&format=JSON" \
+            "https://data.api.abs.gov.au/rest/data/ABS,LF?detail=full" \
             -o data/labour_force/labour_force.json
           echo "Labour Force JSON: $(wc -c < data/labour_force/labour_force.json) bytes"
 
