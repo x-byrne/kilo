@@ -93,6 +93,66 @@ jobs:
           test -s data/lci/lci.csv
           echo '{"dataflow":"ABS,LCI","key":"1","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lci/lci.meta.json
 
+      - name: Fetch CPI Groups
+        run: |
+          mkdir -p data/cpigroups
+          for i in 1 2 3; do
+            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1.GP&format=CSV" \
+              -o data/cpigroups/cpigroups.csv && break
+            echo "Retry $i/3 for CPI Groups CSV" >&2
+            sleep 5
+          done
+          for i in 1 2 3; do
+            curl -sS -A "absvis-framework" -H "Accept: application/json" \
+              "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=1.GP&format=JSON" \
+              -o data/cpigroups/cpigroups.json && break
+            echo "Retry $i/3 for CPI Groups JSON" >&2
+            sleep 5
+          done
+          test -s data/cpigroups/cpigroups.csv
+          echo '{"dataflow":"ABS,CPI","key":"1.GP","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/cpigroups/cpigroups.meta.json
+
+      - name: Fetch CPI Housing
+        run: |
+          mkdir -p data/cpihousing
+          for i in 1 2 3; do
+            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=04&format=CSV" \
+              -o data/cpihousing/cpihousing.csv && break
+            echo "Retry $i/3 for CPI Housing CSV" >&2
+            sleep 5
+          done
+          for i in 1 2 3; do
+            curl -sS -A "absvis-framework" -H "Accept: application/json" \
+              "https://data.api.abs.gov.au/data/ABS,CPI?dimension=Measure=04&format=JSON" \
+              -o data/cpihousing/cpihousing.json && break
+            echo "Retry $i/3 for CPI Housing JSON" >&2
+            sleep 5
+          done
+          test -s data/cpihousing/cpihousing.csv
+          echo '{"dataflow":"ABS,CPI","key":"04","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/cpihousing/cpihousing.meta.json
+
+      - name: Fetch LCI Groups
+        run: |
+          mkdir -p data/lcigroups
+          for i in 1 2 3; do
+            curl -sS -A "absvis-framework" -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+              "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1.GP&format=CSV" \
+              -o data/lcigroups/lcigroups.csv && break
+            echo "Retry $i/3 for LCI Groups CSV" >&2
+            sleep 5
+          done
+          for i in 1 2 3; do
+            curl -sS -A "absvis-framework" -H "Accept: application/json" \
+              "https://data.api.abs.gov.au/data/ABS,LCI?dimension=Measure=1.GP&format=JSON" \
+              -o data/lcigroups/lcigroups.json && break
+            echo "Retry $i/3 for LCI Groups JSON" >&2
+            sleep 5
+          done
+          test -s data/lcigroups/lcigroups.csv
+          echo '{"dataflow":"ABS,LCI","key":"1.GP","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/lcigroups/lcigroups.meta.json
+
       - name: Fetch Population
         run: |
           mkdir -p data/population
