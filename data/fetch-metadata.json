@@ -1,59 +1,62 @@
 {
   "cpi": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.988Z"
   },
   "cpigroups": {
-    "error": "ENOENT: no such file or directory, open 'data/cpigroups/cpigroups.csv'"
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "cpihousing": {
-    "error": "ENOENT: no such file or directory, open 'data/cpihousing/cpihousing.csv'"
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "awe": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "lci": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "lcigroups": {
-    "error": "ENOENT: no such file or directory, open 'data/lcigroups/lcigroups.csv'"
+    "rows": 19,
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "wpi": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "population": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "gdp": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "households": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "building_activity": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "lending_housing": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "labour_account": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "household_spending": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   },
   "labour_force": {
     "rows": 19,
-    "lastUpdated": "2026-08-12T03:17:20.887Z"
+    "lastUpdated": "2026-08-12T03:31:36.989Z"
   }
 }
