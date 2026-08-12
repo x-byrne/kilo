@@ -7,6 +7,8 @@ on:
 jobs:
   fetch-abs-data:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -318,6 +320,7 @@ jobs:
         run: |
           git config user.name "absvis-bot"
           git config user.email "bot@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/x-byrne/kilo.git
           git add data/
           git diff --cached --quiet || git commit -m "chore: update ABS data snapshots"
           git push
