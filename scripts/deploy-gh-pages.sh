@@ -17,7 +17,6 @@ FILES=(
 
 DIRS=(
   "src"
-  "data"
 )
 
 for f in "${FILES[@]}"; do
@@ -39,12 +38,9 @@ for d in "${DIRS[@]}"; do
   fi
 done
 
-rm -f "${DOCS_DIR}/verification-report.md" "${DOCS_DIR}/e2e-verification.md"
-
 echo "GitHub Pages files prepared in ${DOCS_DIR}"
 echo ""
 echo "To deploy:"
 echo "  1. Commit and push the docs/ folder to main"
-echo "  2. In GitHub repo Settings → Pages, set Source to 'Deploy from a branch'"
-echo "     Branch: main, Folder: /docs"
+echo "  2. In GitHub repo Settings → Pages, set Source to 'GitHub Actions'"
 echo "  3. Site will be available at https://x-byrne.github.io/kilo/"

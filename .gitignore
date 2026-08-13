@@ -8,3 +8,9 @@ dist/
 coverage/
 .nyc_output/
 *.local
+docs/data/
+docs/src/
+docs/index.html
+docs/datasets.json
+docs/package.json
+docs/.nojekyll
