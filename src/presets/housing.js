@@ -3,10 +3,10 @@ export const housing = {
   series: ['cpihousing', 'awe'],
   transformPipeline: { cpihousing: [], awe: [] },
   stats: [],
-  renderChart(canvasId, comparison) {
+  async renderChart(canvasId, comparison) {
     comparison.clear();
     comparison.addSeries('cpihousing', []);
     comparison.addSeries('awe', []);
-    comparison.render(canvasId, 'index');
+    await comparison.render(canvasId, 'index');
   }
 };

@@ -8,10 +8,10 @@ export const abundance = {
     { label: 'AWE', value: '—' },
     { label: 'CPI', value: '—' }
   ],
-  renderChart(canvasId, comparison) {
+  async renderChart(canvasId, comparison) {
     comparison.clear();
     comparison.addSeries('cpi', []);
     comparison.addSeries('awe', []);
-    comparison.render(canvasId, 'index');
+    await comparison.render(canvasId, 'index');
   }
 };

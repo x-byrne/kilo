@@ -20,14 +20,14 @@ export class App {
     this.rangeSlider = null;
     this.preset = null;
   }
-  mount(el) {
+  async mount(el) {
     this.el = el;
-    this._initData();
+    await this._initData();
     this._initUI();
-    this._loadState();
+    await this._loadState();
   }
-  _initData() {
-    this.catalog = new DataCatalog();
+  async _initData() {
+    this.catalog = await DataCatalog.fromJSON('./datasets.json');
     this.loader = new DataLoader();
     this.comparison = new ComparisonManager(this.catalog, this.loader);
   }
@@ -104,7 +104,7 @@ export class App {
       });
     });
   }
-  _activatePreset(name) {
+  async _activatePreset(name) {
     const preset = loadPreset(name);
     if (!preset) return;
     this.preset = preset;
@@ -128,7 +128,7 @@ export class App {
       }
     }
     if (preset.renderChart) {
-      const chart = preset.renderChart('preset-chart', this.comparison);
+      await preset.renderChart('preset-chart', this.comparison);
     }
     this.urlState.write({ preset: name });
   }
@@ -142,10 +142,10 @@ export class App {
     await this.comparison.render('main-chart', this.controls.state.mode, this.rangeSlider.from, this.rangeSlider.to);
     this.urlState.write({ series: Array.from(this.picker.selected), mode: this.controls.state.mode, deflator: this.controls.state.deflator, from: this.rangeSlider.from, to: this.rangeSlider.to });
   }
-  _loadState() {
+  async _loadState() {
     const state = this.urlState.read();
     if (state.preset) {
-      this._activatePreset(state.preset);
+      await this._activatePreset(state.preset);
     }
   }
 }

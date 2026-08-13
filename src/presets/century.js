@@ -3,10 +3,10 @@ export const century = {
   series: ['cpigroups', 'awe'],
   transformPipeline: { cpigroups: [], awe: [] },
   stats: [],
-  renderChart(canvasId, comparison) {
+  async renderChart(canvasId, comparison) {
     comparison.clear();
     comparison.addSeries('cpigroups', []);
     comparison.addSeries('awe', []);
-    comparison.render(canvasId, 'index');
+    await comparison.render(canvasId, 'index');
   }
 };
