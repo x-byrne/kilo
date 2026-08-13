@@ -1,0 +1,13 @@
+{
+  "name": "absvis-framework",
+  "version": "0.1.0",
+  "description": "Consolidated ABS visualisation framework — vanilla JS, no build step",
+  "type": "module",
+  "scripts": {
+    "start": "npx serve .",
+    "test": "node --test src/**/*.test.js",
+    "deploy": "bash scripts/deploy-gh-pages.sh"
+  },
+  "keywords": ["abs", "visualisation", "economics", "chart.js"],
+  "license": "MIT"
+}
