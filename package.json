@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "npx serve .",
-    "test": "node --test src/**/*.test.js"
+    "test": "node --test src/**/*.test.js",
+    "deploy": "bash scripts/deploy-gh-pages.sh"
   },
   "keywords": ["abs", "visualisation", "economics", "chart.js"],
   "license": "MIT"
