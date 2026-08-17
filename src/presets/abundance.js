@@ -3,10 +3,10 @@ export const abundance = {
   series: ['cpi', 'awe'],
   transformPipeline: { cpi: [], awe: [] },
   stats: [
-    { label: 'Abundance', value: '—' },
-    { label: 'Time Price', value: '—' },
-    { label: 'AWE', value: '—' },
-    { label: 'CPI', value: '—' }
+    { id: 'abundance', label: 'Abundance', value: '—' },
+    { id: 'timeprice', label: 'Time Price', value: '—' },
+    { id: 'awe', label: 'AWE', value: '—' },
+    { id: 'cpi', label: 'CPI', value: '—' }
   ],
   async renderChart(canvasId, comparison) {
     comparison.clear();
