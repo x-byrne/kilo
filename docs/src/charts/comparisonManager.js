@@ -1,6 +1,6 @@
 import { ChartManager } from './chartManager.js';
 import { compose, rebase, growth as growthTransform, ratio as ratioTransform, deflate, perCapita, perHousehold } from '../transforms/index.js';
-import { periodToNum } from '../loader/parser.js';
+import { periodToNum, periodLabel, interpolateSeries } from '../loader/parser.js';
 
 const WARM = ['#e76f51', '#f4a261', '#e9c46a', '#d62828', '#f77f00'];
 const COOL = ['#2a9d8f', '#264653', '#8ab17d', '#457b9d', '#1d3557'];
@@ -29,13 +29,13 @@ export class ComparisonManager {
     if (!ids.length) return null;
     const promises = ids.map(id => this.loader.load(id));
     const allRows = await Promise.all(promises);
-    const targetNums = this._commonTimeline(allRows);
+    const targetNums = this._buildCommonTimeline(allRows);
     const datasets = [];
     const benchmark = this.benchmarkId ? allRows[ids.indexOf(this.benchmarkId)] : allRows[0];
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i];
       const meta = this.series.get(id).meta;
-      let rows = allRows[i];
+      let rows = interpolateSeries(allRows[i], targetNums, 'value');
       const pipeline = this.series.get(id).transformPipeline;
       for (const fn of pipeline) {
         if (fn === 'deflate') rows = deflate(rows, benchmark, targetNums);
@@ -52,10 +52,13 @@ export class ComparisonManager {
           return n !== null && n >= from && n <= to;
         });
       }
+      const labels = rows.map(r => typeof r.period === 'number' ? periodLabel(r.period) : r.period);
+      const values = rows.map(r => r.value);
       const color = this._assignColor(i, id);
       datasets.push({
         label: meta.name,
-        data: rows.map(r => ({ x: r.period, y: r.value })),
+        data: values,
+        labels,
         borderColor: color,
         backgroundColor: color + '33',
         borderWidth: 2,
@@ -63,20 +66,25 @@ export class ComparisonManager {
         tension: 0.2
       });
     }
+    const labels = targetNums.map(n => periodLabel(n)).filter(l => {
+      if (!from && !to) return true;
+      const num = periodToNum(l);
+      return num !== null && num >= from && num <= to;
+    });
     return this.chartManager.create(canvasId, {
       type: 'line',
-      data: { datasets },
+      data: { labels, datasets },
       options: {
         interaction: { mode: 'index', intersect: false },
         plugins: { legend: { display: datasets.length > 1 } }
       }
     });
   }
-  _commonTimeline(rowsArrays) {
+  _buildCommonTimeline(rowsArrays) {
     const nums = new Set();
     for (const rows of rowsArrays) {
       for (const r of rows) {
-        const n = typeof r.period === 'number' ? r.period : null;
+        const n = periodToNum(r.TIME_PERIOD || r.period);
         if (n !== null) nums.add(n);
       }
     }
