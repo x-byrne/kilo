@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Australian Housing Projection Simulator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
+    </script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
+        .controls { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .input-group { margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #eee; }
+        .chart-container { position: relative; height: 400px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .toggle-group { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <h1>Housing Projection Simulator</h1>
+    <div class="controls">
+        <div class="input-group" style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <label style="flex: 1;">Net Overseas Migration per year: <input type="number" id="migration" value="275000" style="width: 100px;" /></label>
+                <label style="flex: 1;">Natural Population Increase Rate (%): <input type="number" id="naturalIncrease" value="0.45" step="0.01" style="width: 80px;" /></label>
+            </div>
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <label style="flex: 1;">Annual Housing Builds: <input type="number" id="builds" value="160000" style="width: 100px;" /></label>
+                <label style="flex: 1;">Average Household Size: <input type="number" id="householdSize" value="2.35" step="0.01" style="width: 80px;" /></label>
+                <button id="simulateBtn" style="padding: 5px 15px; margin-left: auto;">Simulate</button>
+            </div>
+            <div class="toggle-group">
+                <input type="checkbox" id="priceToggle" />
+                <label for="priceToggle">Show Mean House Price (from ABS RES_DWELL_ST via AusAbund)</label>
+            </div>
+        </div>
+    </div>
+    <div class="chart-container">
+        <canvas id="housingChart"></canvas>
+    </div>
+    <table>
+        <thead>
+            <tr><th>Year</th><th>Population</th><th>Net Overseas Migration</th><th>Actual Dwellings</th><th>Required Dwellings</th><th id="priceHeader" class="hidden">Mean House Price</th></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+    <script type="module" src="housing.js"></script>
+    <script>
+        const priceToggle = document.getElementById('priceToggle');
+        const priceHeader = document.getElementById('priceHeader');
+        priceToggle.addEventListener('change', function() {
+            if (this.checked) {
+                priceHeader.classList.remove('hidden');
+            } else {
+                priceHeader.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
