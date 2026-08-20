@@ -16,6 +16,7 @@ export function parseCSV(text) {
       else if (ch === '\r' || ch === '\n') {
         cells.push(cur.trim()); cur = '';
         if (cells.some(c => c !== '')) rows.push(cells.splice(0));
+        if (ch === '\r' && text[i + 1] === '\n') i++;
       } else cur += ch;
     }
   }

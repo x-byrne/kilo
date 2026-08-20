@@ -9,10 +9,10 @@ export class DataCatalog {
 
   listByCategory() {
     const map = new Map();
-    for (const ds of Object.values(this.datasets)) {
+    for (const [id, ds] of Object.entries(this.datasets)) {
       const cat = ds.category || 'Other';
       if (!map.has(cat)) map.set(cat, []);
-      map.get(cat).push(ds);
+      map.get(cat).push({ ...ds, id });
     }
     return map;
   }

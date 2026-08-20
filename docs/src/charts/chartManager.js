@@ -2,6 +2,17 @@ export class ChartManager {
   constructor() {
     this.instances = new Map();
   }
+  static deepMerge(target, source) {
+    const result = { ...target };
+    for (const key of Object.keys(source)) {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && source[key] !== null) {
+        result[key] = ChartManager.deepMerge(target[key] || {}, source[key]);
+      } else {
+        result[key] = source[key];
+      }
+    }
+    return result;
+  }
   create(canvasId, config) {
     if (this.instances.has(canvasId)) {
       this.instances.get(canvasId).destroy();
@@ -36,8 +47,8 @@ export class ChartManager {
     const merged = {
       ...defaults,
       ...config,
-      options: { ...defaults.options, ...(config.options || {}) },
-      plugins: { ...defaults.plugins, ...(config.plugins || {}) }
+      options: ChartManager.deepMerge(defaults.options, config.options || {}),
+      plugins: ChartManager.deepMerge(defaults.plugins, config.plugins || {})
     };
     const chart = new Chart(canvas, merged);
     this.instances.set(canvasId, chart);

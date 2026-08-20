@@ -123,7 +123,15 @@ export class App {
       for (const s of preset.stats) {
         const div = document.createElement('div');
         div.className = 'stat-card';
-        div.innerHTML = `<div class="value">${s.value}</div><div class="label">${s.label}</div>`;
+        if (s.id) div.id = s.id;
+        const valId = s.valueId || (s.id ? `val-${s.id}` : null);
+        const label = s.label || '';
+        const value = s.value || '—';
+        if (valId) {
+          div.innerHTML = `<div class="value" id="${valId}">${value}</div><div class="label">${label}</div>`;
+        } else {
+          div.innerHTML = `<div class="value">${value}</div><div class="label">${label}</div>`;
+        }
         cards.appendChild(div);
       }
     }
