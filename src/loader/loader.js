@@ -14,8 +14,11 @@ export class DataLoader {
     const rows = parseCSV(text);
     return rows.map(row => {
       const out = { ...row };
-      if (out.TIME_PERIOD !== undefined && out.period === undefined) {
+      if (out.TIME_PERIOD !== undefined) {
         out.period = periodToNum(out.TIME_PERIOD);
+      }
+      if (out.OBS_VALUE !== undefined && out.value === undefined) {
+        out.value = out.OBS_VALUE;
       }
       return out;
     });

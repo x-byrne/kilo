@@ -36,7 +36,7 @@ export function parseCSV(text) {
 
 export function periodToNum(tp) {
   if (!tp) return null;
-  const m = String(tp).match(/^(\d{4})(?:[-–](Q[1-4]|S[1-2]|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec))?$/);
+  const m = String(tp).match(/^(\d{4})(?:[-–](Q[1-4]|S[1-2]|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)|(?:0?[1-9]|1[0-2])))?$/);
   if (!m) return parseFloat(tp);
   const year = parseInt(m[1], 10);
   const q = m[2];
@@ -44,7 +44,9 @@ export function periodToNum(tp) {
   if (q.startsWith('Q')) return year + (parseInt(q[1], 10) - 1) * 0.25;
   if (q.startsWith('S')) return year + (parseInt(q[1], 10) - 1) * 0.5;
   const monthMap = { Jan: 0, Feb: 0.0833, Mar: 0.1667, Apr: 0.25, May: 0.3333, Jun: 0.4167, Jul: 0.5, Aug: 0.5833, Sep: 0.6667, Oct: 0.75, Nov: 0.8333, Dec: 0.9167 };
-  return year + (monthMap[q] || 0);
+  if (monthMap[q] !== undefined) return year + monthMap[q];
+  const monthNum = parseInt(q, 10);
+  return year + (monthNum - 1) / 12;
 }
 
 export function periodLabel(num) {
@@ -57,6 +59,9 @@ export function periodLabel(num) {
   if (Math.abs(frac - 0.75) < 0.01) return `${year}-Q3`;
   if (Math.abs(frac - 1.0) < 0.01) return `${year}-Q4`;
   const q = Math.round(frac * 4);
+  if (Math.abs(frac - q * 0.25) < 0.01) return `${year}-Q${Math.min(q, 4)}`;
+  const monthNum = Math.round(frac * 12) + 1;
+  if (monthNum >= 1 && monthNum <= 12) return `${year}-${String(monthNum).padStart(2, '0')}`;
   return `${year}-Q${Math.min(q, 4)}`;
 }
 
