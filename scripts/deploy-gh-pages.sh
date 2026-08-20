@@ -18,6 +18,7 @@ FILES=(
 DIRS=(
   "src"
   "data"
+  "housing"
 )
 
 for f in "${FILES[@]}"; do
