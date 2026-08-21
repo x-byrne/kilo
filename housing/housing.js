@@ -81,21 +81,23 @@ function transformAbsData(popData, dwgData, priceData) {
 
     // Parse Mean Price from AusAbund res_dwell_st JSON
     if (priceData && priceData.data && priceData.data.dataSets && priceData.data.dataSets[0]) {
-        const priceObs = priceData.data.dataSets[0].observations;
-        const priceDims = priceData.data.structures[0].dimensions.observation;
+        const priceSeries = priceData.data.dataSets[0].series;
+        const priceDims = priceData.data.structure.dimensions.observation;
         const priceTimeIdx = priceDims.findIndex(d => d.id === 'TIME_PERIOD');
         const priceMeasureIdx = priceDims.findIndex(d => d.id === 'MEASURE');
         
-        Object.entries(priceObs).forEach(([key, val]) => {
-            const parts = key.split(':');
+        Object.entries(priceSeries).forEach(([seriesKey, seriesData]) => {
+            const parts = seriesKey.split(':');
             const measure = priceDims[priceMeasureIdx].values[parts[priceMeasureIdx]].id;
             if (measure === '5') {
-                const time = priceDims[priceTimeIdx].values[parts[priceTimeIdx]].id;
-                const year = parseInt(time.split('-')[0]);
-                if (historical[year]) {
-                    historical[year].meanPrice = (parseFloat(val[0]) * 1000);
-                    historical[year].priceQuarters += 1;
-                }
+                Object.entries(seriesData.observations).forEach(([obsKey, val]) => {
+                    const time = priceDims[priceTimeIdx].values[obsKey].id;
+                    const year = parseInt(time.split('-')[0]);
+                    if (historical[year]) {
+                        historical[year].meanPrice = (parseFloat(val[0]) * 1000);
+                        historical[year].priceQuarters += 1;
+                    }
+                });
             }
         });
     }
@@ -128,20 +130,22 @@ function transformAbsData(popData, dwgData, priceData) {
     });
 
     if (priceData && priceData.data && priceData.data.dataSets && priceData.data.dataSets[0]) {
-        const priceObs = priceData.data.dataSets[0].observations;
-        const priceDims = priceData.data.structures[0].dimensions.observation;
+        const priceSeries = priceData.data.dataSets[0].series;
+        const priceDims = priceData.data.structure.dimensions.observation;
         const priceTimeIdx = priceDims.findIndex(d => d.id === 'TIME_PERIOD');
         const priceMeasureIdx = priceDims.findIndex(d => d.id === 'MEASURE');
         
-        Object.entries(priceObs).forEach(([key, val]) => {
-            const parts = key.split(':');
+        Object.entries(priceSeries).forEach(([seriesKey, seriesData]) => {
+            const parts = seriesKey.split(':');
             const measure = priceDims[priceMeasureIdx].values[parts[priceMeasureIdx]].id;
             if (measure === '5') {
-                const time = priceDims[priceTimeIdx].values[parts[priceTimeIdx]].id;
-                const year = parseInt(time.split('-')[0]);
-                const q = parseInt(time.split('-Q')[1]);
-                if (!quarterlyMap.price[year]) quarterlyMap.price[year] = {};
-                quarterlyMap.price[year][q] = parseFloat(val[0]) * 1000;
+                Object.entries(seriesData.observations).forEach(([obsKey, val]) => {
+                    const time = priceDims[priceTimeIdx].values[obsKey].id;
+                    const year = parseInt(time.split('-')[0]);
+                    const q = parseInt(time.split('-Q')[1]);
+                    if (!quarterlyMap.price[year]) quarterlyMap.price[year] = {};
+                    quarterlyMap.price[year][q] = parseFloat(val[0]) * 1000;
+                });
             }
         });
     }
