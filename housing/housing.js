@@ -82,16 +82,18 @@ function transformAbsData(popData, dwgData, priceData) {
     // Parse Mean Price from AusAbund res_dwell_st JSON
     if (priceData && priceData.data && priceData.data.dataSets && priceData.data.dataSets[0]) {
         const priceSeries = priceData.data.dataSets[0].series;
-        const priceDims = priceData.data.structure.dimensions.observation;
-        const priceTimeIdx = priceDims.findIndex(d => d.id === 'TIME_PERIOD');
-        const priceMeasureIdx = priceDims.findIndex(d => d.id === 'MEASURE');
+        const priceSeriesDims = priceData.data.structure.dimensions.series;
+        const priceObsDims = priceData.data.structure.dimensions.observation;
+        const measureDim = priceSeriesDims.find(d => d.id === 'MEASURE');
+        const measureSeriesIdx = priceSeriesDims.indexOf(measureDim);
+        const timeDim = priceObsDims[0];
         
         Object.entries(priceSeries).forEach(([seriesKey, seriesData]) => {
             const parts = seriesKey.split(':');
-            const measure = priceDims[priceMeasureIdx].values[parts[priceMeasureIdx]].id;
+            const measure = measureDim.values[parts[measureSeriesIdx]].id;
             if (measure === '5') {
                 Object.entries(seriesData.observations).forEach(([obsKey, val]) => {
-                    const time = priceDims[priceTimeIdx].values[obsKey].id;
+                    const time = timeDim.values[obsKey].id;
                     const year = parseInt(time.split('-')[0]);
                     if (historical[year]) {
                         historical[year].meanPrice = (parseFloat(val[0]) * 1000);
@@ -131,16 +133,18 @@ function transformAbsData(popData, dwgData, priceData) {
 
     if (priceData && priceData.data && priceData.data.dataSets && priceData.data.dataSets[0]) {
         const priceSeries = priceData.data.dataSets[0].series;
-        const priceDims = priceData.data.structure.dimensions.observation;
-        const priceTimeIdx = priceDims.findIndex(d => d.id === 'TIME_PERIOD');
-        const priceMeasureIdx = priceDims.findIndex(d => d.id === 'MEASURE');
+        const priceSeriesDims = priceData.data.structure.dimensions.series;
+        const priceObsDims = priceData.data.structure.dimensions.observation;
+        const measureDim = priceSeriesDims.find(d => d.id === 'MEASURE');
+        const measureSeriesIdx = priceSeriesDims.indexOf(measureDim);
+        const timeDim = priceObsDims[0];
         
         Object.entries(priceSeries).forEach(([seriesKey, seriesData]) => {
             const parts = seriesKey.split(':');
-            const measure = priceDims[priceMeasureIdx].values[parts[priceMeasureIdx]].id;
+            const measure = measureDim.values[parts[measureSeriesIdx]].id;
             if (measure === '5') {
                 Object.entries(seriesData.observations).forEach(([obsKey, val]) => {
-                    const time = priceDims[priceTimeIdx].values[obsKey].id;
+                    const time = timeDim.values[obsKey].id;
                     const year = parseInt(time.split('-')[0]);
                     const q = parseInt(time.split('-Q')[1]);
                     if (!quarterlyMap.price[year]) quarterlyMap.price[year] = {};
