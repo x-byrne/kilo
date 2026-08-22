@@ -302,7 +302,7 @@ function renderChart() {
         });
     }
 
-    if (window.housingChart) {
+    if (window.housingChart && typeof window.housingChart.destroy === 'function') {
         window.housingChart.destroy();
     }
 
