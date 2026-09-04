@@ -27,13 +27,14 @@ jobs:
       LABOUR_ACCOUNT_DATAFLOW: "ABS,LABOUR_ACCT_Q"
       HOUSEHOLD_SPENDING_DATAFLOW: "ABS,HSI_Q"
       LABOUR_FORCE_DATAFLOW: "ABS,LF"
+      RES_DWELL_CC_DATAFLOW: "ABS,RES_DWELL"
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Create data directories
         run: |
-          mkdir -p data/cpi data/cpigroups data/cpihousing data/awe data/lci data/lcigroups data/wpi data/population data/gdp data/households data/building_activity data/lending_housing data/labour_account data/household_spending data/labour_force
+          mkdir -p data/cpi data/cpigroups data/cpihousing data/awe data/lci data/lcigroups data/wpi data/population data/gdp data/households data/building_activity data/lending_housing data/labour_account data/household_spending data/labour_force data/res_dwell_cc
 
       - name: Fetch CPI CSV
         run: |
@@ -305,6 +306,24 @@ jobs:
             -o data/labour_force/labour_force.json
           echo "Labour Force JSON: $(wc -c < data/labour_force/labour_force.json) bytes"
 
+      - name: Fetch RES_DWELL CSV
+        run: |
+          curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+csv;version=1.0.0" \
+            "$ABS_API/$RES_DWELL_CC_DATAFLOW/3.1GSYD+2GMEL+3GBRI+4GADE+5GPER+6GHOB+7GDAR+8ACTE.Q?detail=dataonly" \
+            -o data/res_dwell_cc/res_dwell_cc.csv
+          echo "RES_DWELL CSV rows: $(wc -l < data/res_dwell_cc/res_dwell_cc.csv)"
+
+      - name: Fetch RES_DWELL JSON
+        run: |
+          curl --silent --show-error --fail --retry 3 --retry-delay 5 --max-time 60 \
+            -H "User-Agent: $USER_AGENT" \
+            -H "Accept: application/vnd.sdmx.data+json;version=1.0" \
+            "$ABS_API/$RES_DWELL_CC_DATAFLOW/3.1GSYD+2GMEL+3GBRI+4GADE+5GPER+6GHOB+7GDAR+8ACTE.Q?detail=full" \
+            -o data/res_dwell_cc/res_dwell_cc.json
+          echo "RES_DWELL JSON: $(wc -c < data/res_dwell_cc/res_dwell_cc.json) bytes"
+
       - name: Validate downloads
         run: |
           for f in data/cpi/cpi.csv data/cpi/cpi.json \
@@ -321,7 +340,8 @@ jobs:
                    data/lending_housing/lending_housing.csv data/lending_housing/lending_housing.json \
                    data/labour_account/labour_account.csv data/labour_account/labour_account.json \
                    data/household_spending/household_spending.csv data/household_spending/household_spending.json \
-                   data/labour_force/labour_force.csv data/labour_force/labour_force.json; do
+                   data/labour_force/labour_force.csv data/labour_force/labour_force.json \
+                   data/res_dwell_cc/res_dwell_cc.csv data/res_dwell_cc/res_dwell_cc.json; do
             if [ ! -s "$f" ]; then
               echo "ERROR: $f is empty or missing"
               exit 1
@@ -346,6 +366,7 @@ jobs:
           echo '{"dataflow":"ABS,LABOUR_ACCT_Q","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/labour_account/labour_account.meta.json
           echo '{"dataflow":"ABS,HSI_Q","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/household_spending/household_spending.meta.json
           echo '{"dataflow":"ABS,LF","key":"all","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/labour_force/labour_force.meta.json
+          echo '{"dataflow":"ABS,RES_DWELL","key":"3.1GSYD+2GMEL+3GBRI+4GADE+5GPER+6GHOB+7GDAR+8ACTE.Q","fetchedAt":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > data/res_dwell_cc/res_dwell_cc.meta.json
 
       - name: Commit and push
         run: |
@@ -366,6 +387,6 @@ jobs:
 
       - name: Purge CDN cache
         run: |
-          for dataset in cpi cpigroups cpihousing awe lci lcigroups wpi population gdp households building_activity lending_housing labour_account household_spending labour_force; do
+          for dataset in cpi cpigroups cpihousing awe lci lcigroups wpi population gdp households building_activity lending_housing labour_account household_spending labour_force res_dwell_cc; do
             curl -s -o /dev/null -w "%{http_code}" "https://purge.jsdelivr.net/gh/x-byrne/kilo@main/data/${dataset}/${dataset}.csv" || true
           done
