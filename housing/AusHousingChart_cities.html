@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Housing Chart of the Century — Australian Capital Cities</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #f8f6f1; color: #1a1812; min-height: 100vh; }
+  header { background: #1a1812; padding: 1.5rem 2rem; }
+  header h1 { font-size: 1.4rem; color: #f8f6f1; font-weight: 400; }
+  header p  { font-size: 0.8rem; color: rgba(255,255,255,0.45); margin-top: 0.25rem; }
+  main { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
+
+  .toolbar {
+    display: flex; flex-direction: column; gap: 1rem;
+    margin-bottom: 1.5rem; background: #fff; padding: 1.25rem;
+    border-radius: 6px; border: 1px solid #e8e4da; box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+  .tool-row { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+  .tool-group { display: flex; align-items: center; gap: 0.75rem; }
+  .toolbar span { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: #999; font-weight: 700; }
+
+  .seg { display: inline-flex; background: #e8e4da; border-radius: 20px; padding: 3px; }
+  .seg button {
+    font-size: 0.7rem; letter-spacing: 0.05em; padding: 0.35rem 0.9rem;
+    border: none; background: transparent; color: #777; cursor: pointer;
+    border-radius: 16px; transition: all 0.2s;
+  }
+  .seg button.active { background: #1a1812; color: #f8f6f1; font-weight: 500; }
+
+  .slider-container { display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 300px; }
+  .range-box { position: relative; flex: 1; height: 20px; }
+  input[type="range"] {
+    position: absolute; width: 100%; pointer-events: none; appearance: none; height: 100%; background: none; z-index: 2;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    height: 18px; width: 18px; border-radius: 50%; background: #1a1812; pointer-events: auto; appearance: none; cursor: pointer; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .slider-track {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 100%; height: 4px; background: #e8e4da; border-radius: 2px; z-index: 1;
+  }
+  #date-label { font-size: 0.75rem; font-weight: 600; color: #1a1812; min-width: 160px; text-align: right; }
+
+  .chart-box {
+    background: #fff; border: 1px solid #e8e4da; border-radius: 6px;
+    padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    height: 600px; position: relative;
+  }
+  #status { font-size: 0.78rem; color: #888; margin-bottom: 1rem; min-height: 1.2em; }
+  #error  { color: #b84040; font-size: 0.85rem; margin-bottom: 1rem; display: none; padding: 1rem; background: #fff1f1; border-radius: 4px; }
+
+  .toggle-group { display: flex; align-items: center; gap: 0.5rem; }
+  .toggle-group input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+  .toggle-group label { font-size: 0.75rem; color: #555; cursor: pointer; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Housing Chart of the Century — Australian Capital Cities</h1>
+  <p>Median transfer prices (capital cities) vs. Avg Weekly Earnings (national &amp; state) &middot; ABS &middot; cdn.jsdelivr.net/gh/x-byrne/AusAbund@main</p>
+</header>
+
+<main>
+  <div id="status">Loading data...</div>
+  <div id="error"></div>
+
+  <div class="toolbar">
+    <div class="tool-row">
+      <div class="tool-group">
+        <span>Income</span>
+        <div class="seg" id="seg-income">
+          <button class="active" data-val="awe">AWE</button>
+          <button data-val="wpi">WPI</button>
+        </div>
+      </div>
+      <div class="tool-group">
+        <span>Display</span>
+        <div class="seg" id="seg-mode">
+          <button class="active" data-val="index">Indexed</button>
+          <button data-val="ratio">Relative to Income</button>
+        </div>
+      </div>
+      <div class="tool-group toggle-group">
+        <input type="checkbox" id="state-awe-toggle" checked>
+        <label for="state-awe-toggle">State AWE</label>
+      </div>
+    </div>
+
+    <div class="tool-row">
+      <div class="tool-group">
+        <span>Period</span>
+        <div class="seg" id="seg-period">
+          <button data-val="20">5Y</button>
+          <button data-val="40">10Y</button>
+          <button class="active" data-val="0">All Time</button>
+        </div>
+      </div>
+      <div class="slider-container">
+        <div class="range-box">
+          <div class="slider-track"></div>
+          <input type="range" id="range-min" value="0">
+          <input type="range" id="range-max" value="0">
+        </div>
+        <div id="date-label">Initializing...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-box">
+    <canvas id="chart"></canvas>
+  </div>
+</main>
+
+<script>
+const BASE_URL = 'https://cdn.jsdelivr.net/gh/x-byrne/AusAbund@main/data/';
+const URLS = {
+  res_dwell_cc: BASE_URL + 'res_dwell_cc/res_dwell_cc.csv',
+  awe:          BASE_URL + 'awe/awe.csv',
+  wpi:          BASE_URL + 'wpi/wpi.csv'
+};
+
+// Capital city REGION codes in the res_dwell_cc dataset
+const CITY_NAMES = {
+  '1GSYD':  'Sydney',
+  '2GMEL':  'Melbourne',
+  '3GBRI':  'Brisbane',
+  '4GADE':  'Adelaide',
+  '5GPER':  'Perth',
+  '6GHOB':  'Hobart',
+  '7GDAR':  'Darwin',
+  '8ACTE':  'ACT',
+};
+
+// State REGION codes in the AWE dataset (matches capital city state)
+const STATE_NAMES = {
+  '1': 'NSW',
+  '2': 'VIC',
+  '3': 'QLD',
+  '4': 'SA',
+  '5': 'WA',
+  '6': 'TAS',
+  '7': 'NT',
+  '8': 'ACT',
+};
+
+// Map capital city REGION -> state REGION for AWE lookup
+const CITY_TO_STATE = {
+  '1GSYD': '1',
+  '2GMEL': '2',
+  '3GBRI': '3',
+  '4GADE': '4',
+  '5GPER': '5',
+  '6GHOB': '6',
+  '7GDAR': '7',
+  '8ACTE': '8',
+};
+
+const PALETTE = [
+  '#e63946', '#2a9d8f', '#457b9d', '#f4a261', '#9b2226',
+  '#7209b7', '#fcbf49', '#1d3557', '#bc4749', '#4361ee',
+  '#4cc9f0', '#e76f51'
+];
+
+let dataRaw = {};
+let periodLabels = [];
+let pNums = [];
+let chart = null;
+
+let state = {
+  income: 'awe',
+  mode: 'index',
+  range: { min: 0, max: 0 },
+  showStateAwe: true
+};
+
+// ── Period parsing ─────────────────────────────────────────────────────────────
+// Returns a sortable float for quarterly and semi-annual periods
+function periodToNum(tp) {
+  if (!tp) return NaN;
+  if (tp.includes('-Q')) {
+    const [y, q] = tp.split('-Q');
+    return parseInt(y) + (parseInt(q) - 1) * 0.25;
+  }
+  if (tp.includes('-S')) {
+    const [y, s] = tp.split('-S');
+    return parseInt(y) + (parseInt(s) === 1 ? 0.25 : 0.75);
+  }
+  return parseInt(tp);
+}
+
+function periodLabel(num) {
+  const yr = Math.floor(num);
+  const q  = Math.round((num - yr) / 0.25) + 1;
+  return `${yr} Q${q}`;
+}
+
+// ── Build value map: periodNum → value ────────────────────────────────────────
+function dataToMap(rows) {
+  const m = {};
+  rows.forEach(r => {
+    const val = parseFloat(r['OBS_VALUE']);
+    if (!isNaN(val)) m[periodToNum(r['TIME_PERIOD'])] = val;
+  });
+  return m;
+}
+
+// ── Interpolate income series (AWE semi-annual or WPI quarterly) onto pNums ───
+function interpolateSeries(rows, targetNums) {
+  const pts = rows
+    .map(r => ({ num: periodToNum(r['TIME_PERIOD']), val: parseFloat(r['OBS_VALUE']) }))
+    .filter(p => !isNaN(p.val) && !isNaN(p.num))
+    .sort((a, b) => a.num - b.num);
+
+  return targetNums.map(t => {
+    const exact = pts.find(p => Math.abs(p.num - t) < 0.001);
+    if (exact) return exact.val;
+    const before = [...pts].reverse().find(p => p.num < t);
+    const after  = pts.find(p => p.num > t);
+    if (!before || !after) return null;
+    return before.val + (t - before.num) / (after.num - before.num) * (after.val - before.val);
+  });
+}
+
+// ── CSV parser ────────────────────────────────────────────────────────────────
+function parseCSV(t) {
+  const [h, ...ls] = t.trim().split('\n');
+  const heads = h.split(',').map(x => x.trim().replace(/^"|"$/g, ''));
+  return ls.map(l => {
+    const vs = l.split(',').map(x => x.trim().replace(/^"|"$/g, ''));
+    return Object.fromEntries(heads.map((x, i) => [x, vs[i]]));
+  });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+async function init() {
+  const status = document.getElementById('status');
+  try {
+    const responses = await Promise.all(
+      Object.values(URLS).map(url => fetch(url).then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status} fetching ${url}`);
+        return r.text();
+      }))
+    );
+    Object.keys(URLS).forEach((key, i) => { dataRaw[key] = parseCSV(responses[i]); });
+
+    // Build quarterly period grid from the res_dwell_cc rows (any city)
+    const cityRows = dataRaw.res_dwell_cc.filter(r => r['REGION'] === '1GSYD');
+    pNums = [...new Set(cityRows.map(r => periodToNum(r['TIME_PERIOD'])))].sort((a, b) => a - b);
+    periodLabels = pNums.map(periodLabel);
+
+    document.getElementById('state-awe-toggle').addEventListener('change', e => {
+      state.showStateAwe = e.target.checked;
+      render();
+    });
+
+    updateSliderBounds();
+    status.textContent = '';
+    render();
+  } catch (err) {
+    status.textContent = '';
+    const errEl = document.getElementById('error');
+    errEl.style.display = 'block';
+    errEl.textContent = 'Error loading data: ' + err.message;
+    console.error(err);
+  }
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render() {
+  const ctx = document.getElementById('chart').getContext('2d');
+  if (chart) chart.destroy();
+
+  const start = state.range.min;
+  const end   = state.range.max;
+  const sliceLabels = periodLabels.slice(start, end + 1);
+
+  // National income interpolated onto the housing quarterly grid, then sliced
+  const incFull  = interpolateSeries(dataRaw[state.income], pNums);
+  const incSlice = incFull.slice(start, end + 1);
+  const incGrowthFactor = incSlice[incSlice.length - 1] / incSlice[0];
+
+  const datasets = [];
+  let colorIdx = 0;
+
+  // ── Capital city median transfer prices ──
+  Object.keys(CITY_NAMES).forEach(region => {
+    const map = dataToMap(dataRaw.res_dwell_cc.filter(r => r['REGION'] === region));
+    const priceFull  = pNums.map(n => map[n] ?? null);
+    const priceSlice = priceFull.slice(start, end + 1);
+
+    if (!priceSlice[0] || priceSlice.every(v => v === null)) return;
+
+    const priceGrowthFactor = priceSlice[priceSlice.length - 1] / priceSlice[0];
+    const isWarm = priceGrowthFactor > incGrowthFactor;
+
+    const color = isWarm
+      ? PALETTE[colorIdx % PALETTE.length]
+      : PALETTE[(colorIdx + 4) % PALETTE.length];
+    colorIdx++;
+
+    let displayData;
+    if (state.mode === 'index') {
+      const base = priceSlice[0];
+      displayData = priceSlice.map(v => v != null ? (v / base) * 100 : null);
+    } else {
+      const baseRatio = priceSlice[0] / incSlice[0];
+      displayData = priceSlice.map((v, i) =>
+        (v != null && incSlice[i] != null) ? ((v / incSlice[i]) / baseRatio) * 100 : null
+      );
+    }
+
+    datasets.push({
+      label: CITY_NAMES[region] + ' Median',
+      data: displayData,
+      borderColor: color,
+      borderWidth: 2,
+      pointRadius: 0,
+      tension: 0.1,
+      order: 10,
+      spanGaps: true,
+    });
+  });
+
+  // ── State AWE lines (one per available state) ──
+  if (state.showStateAwe) {
+    Object.keys(CITY_TO_STATE).forEach(cityRegion => {
+      const stateRegion = CITY_TO_STATE[cityRegion];
+      const stateRows = dataRaw.awe.filter(r =>
+        r['REGION'] === stateRegion &&
+        r['MEASURE'] === '1' &&
+        r['SEX'] === '3' &&
+        r['SECTOR'] === '7' &&
+        r['INDUSTRY'] === 'E' &&
+        r['TSEST'] === '10'
+      );
+      if (stateRows.length === 0) return;
+
+      const stateFull  = interpolateSeries(stateRows, pNums);
+      const stateSlice = stateFull.slice(start, end + 1);
+      if (!stateSlice[0]) return;
+
+      let displayData;
+      if (state.mode === 'index') {
+        displayData = stateSlice.map(v => v != null ? (v / stateSlice[0]) * 100 : null);
+      } else {
+        const baseRatio = stateSlice[0] / incSlice[0];
+        displayData = stateSlice.map((v, i) =>
+          (v != null && incSlice[i] != null) ? ((v / incSlice[i]) / baseRatio) * 100 : null
+        );
+      }
+
+      datasets.push({
+        label: STATE_NAMES[stateRegion] + ' AWE',
+        data: displayData,
+        borderColor: '#888',
+        borderWidth: 1.2,
+        borderDash: [4, 3],
+        pointRadius: 0,
+        tension: 0.1,
+        order: 20,
+        spanGaps: true,
+      });
+    });
+  }
+
+  // ── National income benchmark line ──
+  if (state.mode === 'index') {
+    datasets.push({
+      label: state.income === 'awe' ? 'AWE (National)' : 'WPI (National)',
+      data: incSlice.map(v => v != null ? (v / incSlice[0]) * 100 : null),
+      borderColor: '#1a1812',
+      borderWidth: 3,
+      borderDash: [8, 4],
+      pointRadius: 0,
+      order: 1,
+      spanGaps: true,
+    });
+  }
+
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: sliceLabels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'nearest', intersect: false },
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } },
+        tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y.toFixed(1)}` } }
+      },
+      scales: {
+        y: {
+          title: { display: true, text: 'Index (Start of Selection = 100)', font: { size: 11, weight: 'bold' } },
+          ticks: { font: { size: 10 } }
+        },
+        x: { ticks: { font: { size: 10 }, maxTicksLimit: 12 } }
+      }
+    }
+  });
+}
+
+// ── Slider ────────────────────────────────────────────────────────────────────
+function updateSliderBounds() {
+  const inc   = interpolateSeries(dataRaw[state.income], pNums);
+  const first = inc.findIndex(v => v !== null);
+  const last  = inc.length - 1 - [...inc].reverse().findIndex(v => v !== null);
+
+  const minS = document.getElementById('range-min');
+  const maxS = document.getElementById('range-max');
+  minS.min = maxS.min = first;
+  minS.max = maxS.max = last;
+  state.range.min = first;
+  state.range.max = last;
+  minS.value = first;
+  maxS.value = last;
+  updateDateLabel();
+}
+
+function updateDateLabel() {
+  document.getElementById('date-label').textContent =
+    `${periodLabels[state.range.min]} — ${periodLabels[state.range.max]}`;
+}
+
+// ── Controls ──────────────────────────────────────────────────────────────────
+document.querySelectorAll('.seg button').forEach(btn => {
+  btn.onclick = e => {
+    const parent = e.target.parentElement;
+    parent.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+
+    const val  = e.target.dataset.val;
+    const type = parent.id.replace('seg-', '');
+
+    if (type === 'income') { state.income = val; updateSliderBounds(); }
+    if (type === 'mode')   { state.mode = val; }
+    if (type === 'period') {
+      const count = parseInt(val);
+      if (count === 0) {
+        updateSliderBounds();
+      } else {
+        state.range.min = Math.max(
+          parseInt(document.getElementById('range-min').min),
+          state.range.max - count
+        );
+        document.getElementById('range-min').value = state.range.min;
+        updateDateLabel();
+      }
+    }
+    render();
+  };
+});
+
+const rMin = document.getElementById('range-min');
+const rMax = document.getElementById('range-max');
+rMin.oninput = rMax.oninput = () => {
+  const v1 = parseInt(rMin.value), v2 = parseInt(rMax.value);
+  state.range.min = Math.min(v1, v2);
+  state.range.max = Math.max(v1, v2);
+  updateDateLabel();
+  render();
+};
+
+init();
+</script>
+</body>
+</html>
