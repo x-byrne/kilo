@@ -61,7 +61,7 @@
 
 <header>
   <h1>Housing Chart of the Century — Australian Capital Cities</h1>
-  <p>Median transfer prices (capital cities) vs. Avg Weekly Earnings (national &amp; state) &middot; ABS &middot; cdn.jsdelivr.net/gh/x-byrne/AusAbund@main</p>
+  <p>Median transfer prices for capital cities vs. Avg Weekly Earnings (national &amp; state) &middot; ABS &middot; cdn.jsdelivr.net/gh/x-byrne/kilo@main</p>
 </header>
 
 <main>
@@ -116,14 +116,14 @@
 </main>
 
 <script>
-const BASE_URL = 'https://cdn.jsdelivr.net/gh/x-byrne/AusAbund@main/data/';
+const BASE_URL = 'https://cdn.jsdelivr.net/gh/x-byrne/kilo@main/data/';
 const URLS = {
   res_dwell_cc: BASE_URL + 'res_dwell_cc/res_dwell_cc.csv',
   awe:          BASE_URL + 'awe/awe.csv',
   wpi:          BASE_URL + 'wpi/wpi.csv'
 };
 
-// Capital city REGION codes in the res_dwell_cc dataset
+// Capital city REGION codes in the res_dwell_cc dataset (MEASURE=3: median price of established house transfers)
 const CITY_NAMES = {
   '1GSYD':  'Sydney',
   '2GMEL':  'Melbourne',
@@ -135,7 +135,7 @@ const CITY_NAMES = {
   '8ACTE':  'ACT',
 };
 
-// State REGION codes in the AWE dataset (matches capital city state)
+// State REGION codes in the AWE dataset
 const STATE_NAMES = {
   '1': 'NSW',
   '2': 'VIC',
@@ -160,9 +160,8 @@ const CITY_TO_STATE = {
 };
 
 const PALETTE = [
-  '#e63946', '#2a9d8f', '#457b9d', '#f4a261', '#9b2226',
-  '#7209b7', '#fcbf49', '#1d3557', '#bc4749', '#4361ee',
-  '#4cc9f0', '#e76f51'
+  '#e63946', '#457b9d', '#2a9d8f', '#f4a261', '#9b2226',
+  '#7209b7', '#d62828', '#4cc9f0'
 ];
 
 let dataRaw = {};
@@ -235,6 +234,50 @@ function parseCSV(t) {
   });
 }
 
+// ── Filter national AWE/WPI rows: MEASURE=1, SEX=3, SECTOR=7, INDUSTRY=TOT, TSEST=10 ──
+function filterNationalIncome(rows) {
+  return rows.filter(r =>
+    r['MEASURE'] === '1' &&
+    r['ESTIMATE_TYPE'] === '1' &&
+    r['SEX'] === '3' &&
+    r['SECTOR'] === '7' &&
+    r['INDUSTRY'] === 'TOT' &&
+    r['TSEST'] === '10' &&
+    r['REGION'] === 'AUS'
+  );
+}
+
+// ── Filter state AWE rows: same dimensions, REGION=state code ─────────────────
+function filterStateAwe(rows, stateRegion) {
+  return rows.filter(r =>
+    r['MEASURE'] === '1' &&
+    r['ESTIMATE_TYPE'] === '1' &&
+    r['SEX'] === '3' &&
+    r['SECTOR'] === '7' &&
+    r['INDUSTRY'] === 'TOT' &&
+    r['TSEST'] === '10' &&
+    r['REGION'] === stateRegion
+  );
+}
+
+// ── Parse capital city median transfer prices from res_dwell_cc CSV ──────────
+// MEASURE=3 (median price of established house transfers), UNIT_MULT=3 (thousands of AUD)
+function parseCityPrices(rows) {
+  const out = {};
+  Object.keys(CITY_NAMES).forEach(region => { out[region] = {}; });
+  rows.forEach(r => {
+    if (r['MEASURE'] !== '3') return;
+    const region = r['REGION'];
+    if (!out[region]) return;
+    const val = parseFloat(r['OBS_VALUE']);
+    if (!isNaN(val)) {
+      // UNIT_MULT=3 → values are in thousands of AUD
+      out[region][periodToNum(r['TIME_PERIOD'])] = val * 1000;
+    }
+  });
+  return out;
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 async function init() {
   const status = document.getElementById('status');
@@ -247,10 +290,14 @@ async function init() {
     );
     Object.keys(URLS).forEach((key, i) => { dataRaw[key] = parseCSV(responses[i]); });
 
-    // Build quarterly period grid from the res_dwell_cc rows (any city)
-    const cityRows = dataRaw.res_dwell_cc.filter(r => r['REGION'] === '1GSYD');
-    pNums = [...new Set(cityRows.map(r => periodToNum(r['TIME_PERIOD'])))].sort((a, b) => a - b);
+    // Build quarterly period grid from the res_dwell_cc rows (Sydney as reference)
+    const cityPrices = parseCityPrices(dataRaw.res_dwell_cc);
+    const sydneyMap = cityPrices['1GSYD'];
+    pNums = Object.keys(sydneyMap).map(Number).sort((a, b) => a - b);
     periodLabels = pNums.map(periodLabel);
+
+    // Stash parsed prices on dataRaw for render()
+    dataRaw._cityPrices = cityPrices;
 
     document.getElementById('state-awe-toggle').addEventListener('change', e => {
       state.showStateAwe = e.target.checked;
@@ -278,8 +325,9 @@ function render() {
   const end   = state.range.max;
   const sliceLabels = periodLabels.slice(start, end + 1);
 
-  // National income interpolated onto the housing quarterly grid, then sliced
-  const incFull  = interpolateSeries(dataRaw[state.income], pNums);
+  // National income (filtered to Total persons, all sectors) interpolated onto the quarterly grid
+  const nationalRows = filterNationalIncome(dataRaw[state.income]);
+  const incFull  = interpolateSeries(nationalRows, pNums);
   const incSlice = incFull.slice(start, end + 1);
   const incGrowthFactor = incSlice[incSlice.length - 1] / incSlice[0];
 
@@ -288,7 +336,7 @@ function render() {
 
   // ── Capital city median transfer prices ──
   Object.keys(CITY_NAMES).forEach(region => {
-    const map = dataToMap(dataRaw.res_dwell_cc.filter(r => r['REGION'] === region));
+    const map = dataRaw._cityPrices[region] || {};
     const priceFull  = pNums.map(n => map[n] ?? null);
     const priceSlice = priceFull.slice(start, end + 1);
 
@@ -296,10 +344,7 @@ function render() {
 
     const priceGrowthFactor = priceSlice[priceSlice.length - 1] / priceSlice[0];
     const isWarm = priceGrowthFactor > incGrowthFactor;
-
-    const color = isWarm
-      ? PALETTE[colorIdx % PALETTE.length]
-      : PALETTE[(colorIdx + 4) % PALETTE.length];
+    const color = PALETTE[colorIdx % PALETTE.length];
     colorIdx++;
 
     let displayData;
@@ -317,7 +362,7 @@ function render() {
       label: CITY_NAMES[region] + ' Median',
       data: displayData,
       borderColor: color,
-      borderWidth: 2,
+      borderWidth: isWarm ? 2.5 : 1.5,
       pointRadius: 0,
       tension: 0.1,
       order: 10,
@@ -329,14 +374,7 @@ function render() {
   if (state.showStateAwe) {
     Object.keys(CITY_TO_STATE).forEach(cityRegion => {
       const stateRegion = CITY_TO_STATE[cityRegion];
-      const stateRows = dataRaw.awe.filter(r =>
-        r['REGION'] === stateRegion &&
-        r['MEASURE'] === '1' &&
-        r['SEX'] === '3' &&
-        r['SECTOR'] === '7' &&
-        r['INDUSTRY'] === 'E' &&
-        r['TSEST'] === '10'
-      );
+      const stateRows = filterStateAwe(dataRaw.awe, stateRegion);
       if (stateRows.length === 0) return;
 
       const stateFull  = interpolateSeries(stateRows, pNums);
@@ -367,7 +405,7 @@ function render() {
     });
   }
 
-  // ── National income benchmark line ──
+  // ── National income benchmark line (indexed mode only) ──
   if (state.mode === 'index') {
     datasets.push({
       label: state.income === 'awe' ? 'AWE (National)' : 'WPI (National)',
@@ -405,7 +443,8 @@ function render() {
 
 // ── Slider ────────────────────────────────────────────────────────────────────
 function updateSliderBounds() {
-  const inc   = interpolateSeries(dataRaw[state.income], pNums);
+  const nationalRows = filterNationalIncome(dataRaw[state.income]);
+  const inc   = interpolateSeries(nationalRows, pNums);
   const first = inc.findIndex(v => v !== null);
   const last  = inc.length - 1 - [...inc].reverse().findIndex(v => v !== null);
 
