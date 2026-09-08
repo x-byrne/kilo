@@ -92,6 +92,13 @@
 
     <div class="tool-row">
       <div class="tool-group">
+        <span>Cities</span>
+        <div id="city-toggles" style="display:flex;flex-wrap:wrap;gap:0.4rem 0.7rem;"></div>
+      </div>
+    </div>
+
+    <div class="tool-row">
+      <div class="tool-group">
         <span>Period</span>
         <div class="seg" id="seg-period">
           <button data-val="20">5Y</button>
@@ -173,7 +180,8 @@ let state = {
   income: 'awe',
   mode: 'index',
   range: { min: 0, max: 0 },
-  showStateAwe: true
+  showStateAwe: true,
+  cities: new Set(Object.keys(CITY_NAMES))
 };
 
 // ── Period parsing ─────────────────────────────────────────────────────────────
@@ -278,6 +286,34 @@ function parseCityPrices(rows) {
   return out;
 }
 
+// ── City toggles ─────────────────────────────────────────────────────────────
+function buildCityToggles() {
+  const wrap = document.getElementById('city-toggles');
+  wrap.innerHTML = '';
+  Object.keys(CITY_NAMES).forEach(region => {
+    const label = document.createElement('label');
+    label.style.display = 'flex';
+    label.style.alignItems = 'center';
+    label.style.gap = '0.3rem';
+    label.style.fontSize = '0.72rem';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = region;
+    cb.checked = true;
+    cb.addEventListener('change', () => {
+      if (cb.checked) state.cities.add(region);
+      else state.cities.delete(region);
+      render();
+    });
+    const span = document.createElement('span');
+    span.textContent = CITY_NAMES[region];
+    span.style.color = PALETTE[Object.keys(CITY_NAMES).indexOf(region) % PALETTE.length];
+    label.appendChild(cb);
+    label.appendChild(span);
+    wrap.appendChild(label);
+  });
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 async function init() {
   const status = document.getElementById('status');
@@ -304,6 +340,7 @@ async function init() {
       render();
     });
 
+    buildCityToggles();
     updateSliderBounds();
     status.textContent = '';
     render();
@@ -336,6 +373,7 @@ function render() {
 
   // ── Capital city median transfer prices ──
   Object.keys(CITY_NAMES).forEach(region => {
+    if (!state.cities.has(region)) return;
     const map = dataRaw._cityPrices[region] || {};
     const priceFull  = pNums.map(n => map[n] ?? null);
     const priceSlice = priceFull.slice(start, end + 1);
@@ -373,6 +411,7 @@ function render() {
   // ── State AWE lines (one per available state) ──
   if (state.showStateAwe) {
     Object.keys(CITY_TO_STATE).forEach(cityRegion => {
+      if (!state.cities.has(cityRegion)) return;
       const stateRegion = CITY_TO_STATE[cityRegion];
       const stateRows = filterStateAwe(dataRaw.awe, stateRegion);
       if (stateRows.length === 0) return;
